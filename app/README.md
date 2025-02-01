@@ -10,6 +10,8 @@
 
 ## Example of `.env`
 
-```
-
+```ini
+CDP_API_KEY_NAME=
+CDP_API_KEY_PRIVATE_KEY=
+OPENAI_API_KEY=
 ```
