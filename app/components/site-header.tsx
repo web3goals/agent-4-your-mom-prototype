@@ -1,8 +1,8 @@
 "use client";
 
 import { siteConfig } from "@/config/site";
-import { MomIcon } from "@/icons/mom";
 import { GithubIcon, MenuIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import {
@@ -18,8 +18,18 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         {/* Left part */}
         <div className="flex gap-6 md:gap-10">
-          <Link href="/" className="flex items-center space-x-2">
-            <MomIcon className="text-foreground size-8" />
+          <Link href="/" className="flex items-center space-x-3">
+            <div className="flex flex-col items-center size-9">
+              <Image
+                src="/images/icon.png"
+                alt="Icon"
+                priority={false}
+                width="100"
+                height="100"
+                sizes="100vw"
+                className="w-full rounded-xl"
+              />
+            </div>
             <span className="text-foreground font-bold">{siteConfig.name}</span>
           </Link>
         </div>
