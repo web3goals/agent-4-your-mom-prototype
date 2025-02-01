@@ -2,7 +2,7 @@ import { errorToString } from "@/lib/converters";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
 import { CdpAgentkit } from "@coinbase/cdp-agentkit-core";
 import { CdpToolkit } from "@coinbase/cdp-langchain";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { BaseMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
   try {
     // Parse body
     const body = await request.json();
-    const bodyMessage = body.message;
-    if (!bodyMessage) {
+    const bodyMessages: BaseMessage[] = body.messages;
+    if (!bodyMessages) {
       return createFailedApiResponse({ message: "Request body invalid" }, 400);
     }
 
@@ -43,15 +43,7 @@ export async function POST(request: NextRequest) {
 
     // Use the agent
     const result = await agent.invoke(
-      {
-        messages: [
-          new SystemMessage({
-            content:
-              "You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit.",
-          }),
-          new HumanMessage({ content: bodyMessage }),
-        ],
-      },
+      { messages: bodyMessages },
       { configurable: { thread_id: 42 } }
     );
 
