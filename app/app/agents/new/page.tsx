@@ -22,7 +22,7 @@ export default function NewAgentPage() {
       // TODO:
 
       // Save agent data in MongoDB
-      const { data } = await axios.post("/api/agent/new", {
+      const { data } = await axios.post("/api/agents/new", {
         name: "Super Agent",
       });
       const agent: Agent = data.data;
