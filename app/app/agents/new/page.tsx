@@ -2,11 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ToastAction } from "@/components/ui/toast";
 import useError from "@/hooks/use-error";
 import { toast } from "@/hooks/use-toast";
 import { Agent } from "@/mongodb/models/agent";
 import axios from "axios";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 // TODO: Implement
@@ -34,7 +36,12 @@ export default function NewAgentPage() {
       // TODO:
       toast({
         title: "Agent created ✨",
-        description: JSON.stringify(agent),
+        description: agent._id?.toString(),
+        action: (
+          <ToastAction altText="Try again">
+            <Link href={`/agents/${agent._id}`}>Open</Link>
+          </ToastAction>
+        ),
       });
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");

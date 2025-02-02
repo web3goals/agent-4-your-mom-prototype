@@ -4,6 +4,7 @@ import { errorToString } from "@/lib/converters";
 import { Agent } from "@/mongodb/models/agent";
 import { insertAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
+import { SystemMessage } from "@langchain/core/messages";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -18,7 +19,12 @@ export async function POST(request: NextRequest) {
     // Create agent
     const agent: Agent = {
       name: bodyName,
-      messages: [],
+      messages: [
+        new SystemMessage({
+          content:
+            "You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit.",
+        }).toDict(),
+      ],
       createdDate: new Date(),
     };
     const agentId = await insertAgent(agent);
