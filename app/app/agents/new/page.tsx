@@ -20,9 +20,6 @@ export default function NewAgentPage() {
     try {
       setIsProsessing(true);
 
-      // Create a Privy Server Wallet for a new agent (do it in API)
-      // TODO:
-
       // Save agent data in MongoDB
       const { data } = await axios.post("/api/agents/new", {
         name: "Super Agent",

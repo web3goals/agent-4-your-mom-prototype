@@ -3,17 +3,25 @@
 import { errorToString } from "@/lib/converters";
 import { findAgent, updateAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
-import { CdpAgentkit } from "@coinbase/cdp-agentkit-core";
-import { CdpToolkit } from "@coinbase/cdp-langchain";
+import {
+  AgentKit,
+  ViemWalletProvider,
+  walletActionProvider,
+} from "@coinbase/agentkit";
+import { getLangChainTools } from "@coinbase/agentkit-langchain";
 import {
   HumanMessage,
   mapStoredMessagesToChatMessages,
 } from "@langchain/core/messages";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
+import { PrivyClient } from "@privy-io/server-auth";
+import { createViemAccount } from "@privy-io/server-auth/viem";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
+import { createWalletClient, http } from "viem";
+import { baseSepolia } from "viem/chains";
 
 export async function POST(
   request: NextRequest,
@@ -35,6 +43,17 @@ export async function POST(
       return createFailedApiResponse({ message: "Not found" }, 404);
     }
 
+    // Get a agent viem account from a Privy server wallet
+    const privy = new PrivyClient(
+      process.env.PRIVY_APP_ID as string,
+      process.env.PRIVY_APP_SECRET as string
+    );
+    const account = await createViemAccount({
+      walletId: agent.privyServerWallet.id,
+      address: agent.privyServerWallet.address as `0x${string}`,
+      privy,
+    });
+
     // Check that the user has access to the agent
     // TODO:
 
@@ -46,19 +65,28 @@ export async function POST(
       model: "gpt-4o-mini",
     });
 
-    // Initialize CDP AgentKit
-    const agentKit = await CdpAgentkit.configureWithWallet({
-      networkId: "base-sepolia",
+    // Initialize AgentKit with tools
+    const client = createWalletClient({
+      account,
+      chain: baseSepolia,
+      transport: http(),
     });
-
-    // Initialize CDP AgentKit Toolkit and get tools
-    const cdpToolkit = new CdpToolkit(agentKit);
-    const tools = cdpToolkit.getTools();
+    const walletProvider = new ViemWalletProvider(client);
+    const agentKit = await AgentKit.from({
+      walletProvider: walletProvider,
+      actionProviders: [walletActionProvider()],
+      cdpApiKeyName: process.env.CDP_API_KEY_NAME,
+      cdpApiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
+        /\\n/g,
+        "\n"
+      ),
+    });
+    const agentKitTools = await getLangChainTools(agentKit);
 
     // Create an agent
     const reactAgent = createReactAgent({
       llm: llm,
-      tools,
+      tools: agentKitTools,
     });
 
     // Use the agent

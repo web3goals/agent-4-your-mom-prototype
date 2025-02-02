@@ -5,6 +5,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { insertAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
 import { SystemMessage } from "@langchain/core/messages";
+import { PrivyClient } from "@privy-io/server-auth";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -16,7 +17,21 @@ export async function POST(request: NextRequest) {
       return createFailedApiResponse({ message: "Request invalid" }, 400);
     }
 
-    // Create agent
+    // Create a Privy server wallet
+    const privy = new PrivyClient(
+      process.env.PRIVY_APP_ID as string,
+      process.env.PRIVY_APP_SECRET as string
+    );
+    const {
+      id: privyId,
+      address: privyAddress,
+      chainType: privyChainType,
+    } = await privy.walletApi.create({
+      chainType: "ethereum",
+    });
+
+    // Create an agent
+    // TODO: Use this system prompt idea - https://docs.cdp.coinbase.com/agentkit/docs/quickstart#creating-your-first-agent
     const agent: Agent = {
       name: bodyName,
       messages: [
@@ -25,11 +40,17 @@ export async function POST(request: NextRequest) {
             "You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit.",
         }).toDict(),
       ],
+      privyServerWallet: {
+        id: privyId,
+        address: privyAddress,
+        chainType: privyChainType,
+      },
       createdDate: new Date(),
     };
     const agentId = await insertAgent(agent);
     agent._id = agentId;
 
+    // Return the agent
     return createSuccessApiResponse(agent);
   } catch (error) {
     console.error(
