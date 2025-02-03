@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb";
 export class Agent {
   constructor(
     public name: string,
+    public description: string,
+    public emoji: string,
     public messages: StoredMessage[],
     public privyServerWallet: {
       id: string;

@@ -22,18 +22,23 @@ import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { createWalletClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
+import { z } from "zod";
+
+const requestBodySchema = z.object({
+  message: z.string().min(1),
+});
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Get request data
+    // Get and parse request data
     const { id } = await params;
     const authorization = (await headers()).get("Authorization");
     const body = await request.json();
-    const bodyMessage: string = body.message;
-    if (!authorization || !bodyMessage) {
+    const bodyParseResult = requestBodySchema.safeParse(body);
+    if (!authorization || !bodyParseResult.success) {
       return createFailedApiResponse({ message: "Request invalid" }, 400);
     }
 
@@ -94,7 +99,7 @@ export async function POST(
       {
         messages: [
           ...mapStoredMessagesToChatMessages(agent.messages),
-          new HumanMessage({ content: bodyMessage }),
+          new HumanMessage({ content: bodyParseResult.data?.message }),
         ],
       },
       { configurable: { thread_id: 42 } }

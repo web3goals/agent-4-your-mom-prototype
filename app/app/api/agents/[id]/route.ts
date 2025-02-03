@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Get request data
+    // Get and parse request data
     const { id } = await params;
     const authorization = (await headers()).get("Authorization");
     if (!authorization) {

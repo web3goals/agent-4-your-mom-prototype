@@ -7,7 +7,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -22,7 +21,7 @@ import {
   StoredMessage,
 } from "@langchain/core/messages";
 import axios from "axios";
-import { BotIcon, Loader2Icon, SendIcon } from "lucide-react";
+import { Loader2Icon, SendIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,48 +32,6 @@ export default function AgentPage() {
   const { id } = useParams();
   const { handleError } = useError();
   const [agent, setAgent] = useState<Agent | undefined>();
-  const [isProsessing, setIsProsessing] = useState(false);
-
-  const formSchema = z.object({
-    message: z.string().min(1),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      message: "",
-    },
-  });
-
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setIsProsessing(true);
-      if (!agent) {
-        throw new Error("Agent undefined");
-      }
-      // Save user message
-      const newAgent = agent;
-      newAgent.messages.push(
-        new HumanMessage({ content: values.message }).toDict()
-      );
-      setAgent(newAgent);
-      // Send user messages to agent
-      // TODO: Use email address from Privy
-      const { data } = await axios.post(
-        `/api/agents/${id}/messages`,
-        { message: values.message },
-        { headers: { Authorization: "test@test.test" } }
-      );
-      // Save agent response message
-      newAgent.messages.push(new AIMessage({ content: data.data }).toDict());
-      setAgent(newAgent);
-      form.reset();
-    } catch (error) {
-      handleError(error, "Failed to submit the form, try again later");
-    } finally {
-      setIsProsessing(false);
-    }
-  }
 
   useEffect(() => {
     setAgent(undefined);
@@ -94,55 +51,12 @@ export default function AgentPage() {
 
   return (
     <main className="container py-6 lg:px-80">
-      <div className="flex items-center justify-center size-16 rounded-full bg-primary">
-        <BotIcon className="text-primary-foreground" />
-      </div>
-      <h1 className="text-3xl font-extrabold tracking-tighter mt-2">
-        Agent #{id}
-      </h1>
-      <Separator className="my-4" />
       {agent ? (
-        <div className="flex flex-col gap-4">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-4"
-            >
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Your message..."
-                        disabled={isProsessing}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" variant="default" disabled={isProsessing}>
-                {isProsessing ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <SendIcon />
-                )}
-                Send
-              </Button>
-            </form>
-          </Form>
-          <EntityList<StoredMessage>
-            entities={agent.messages?.toReversed()}
-            renderEntityCard={(message, index) => (
-              <MessageCard key={index} message={message} />
-            )}
-            noEntitiesText="No messages here yet..."
-          />
-        </div>
+        <>
+          <AgentHeader agent={agent} />
+          <Separator className="my-8" />
+          <AgentChat agent={agent} onAgentUpdate={(agent) => setAgent(agent)} />
+        </>
       ) : (
         <Skeleton className="h-8" />
       )}
@@ -150,10 +64,136 @@ export default function AgentPage() {
   );
 }
 
-function MessageCard(props: { message: StoredMessage }) {
+function AgentHeader(props: { agent: Agent }) {
   return (
-    <div className="w-full border rounded px-4 py-6">
-      <p className="text-sm">{JSON.stringify(props.message, null, 2)}</p>
+    <div>
+      <div className="flex items-center justify-center size-24 rounded-full bg-primary">
+        <p className="text-4xl">{props.agent.emoji}</p>
+      </div>
+      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
+        {props.agent.name}
+      </h1>
+      <p className="text-muted-foreground mt-1">{props.agent.description}</p>
+    </div>
+  );
+}
+
+function AgentChat(props: {
+  agent: Agent;
+  onAgentUpdate: (agent: Agent) => void;
+}) {
+  const { handleError } = useError();
+  const [isProsessing, setIsProsessing] = useState(false);
+
+  const formSchema = z.object({
+    message: z.string().min(1),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      message: "",
+    },
+  });
+
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsProsessing(true);
+      // Save user message
+      const newAgent = props.agent;
+      newAgent.messages.push(
+        new HumanMessage({ content: values.message }).toDict()
+      );
+      props.onAgentUpdate(newAgent);
+      // Send user message to agent
+      // TODO: Use email address from Privy
+      const { data } = await axios.post(
+        `/api/agents/${props.agent._id}/messages`,
+        { message: values.message },
+        { headers: { Authorization: "test@test.test" } }
+      );
+      // Save agent response message
+      newAgent.messages.push(new AIMessage({ content: data.data }).toDict());
+      props.onAgentUpdate(newAgent);
+      form.reset();
+    } catch (error) {
+      handleError(error, "Failed to submit the form, try again later");
+    } finally {
+      setIsProsessing(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-row gap-2"
+        >
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input
+                    placeholder="Your message..."
+                    disabled={isProsessing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" variant="default" disabled={isProsessing}>
+            {isProsessing ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <SendIcon />
+            )}
+          </Button>
+        </form>
+      </Form>
+      <EntityList<StoredMessage>
+        entities={props.agent.messages?.toReversed()}
+        renderEntityCard={(message, index) => (
+          <AgentMessageCard key={index} agent={props.agent} message={message} />
+        )}
+        noEntitiesText="No messages here yet..."
+      />
+    </div>
+  );
+}
+
+function AgentMessageCard(props: { agent: Agent; message: StoredMessage }) {
+  if (props.message.type === "ai" && props.message.data.content) {
+    return (
+      <div className="w-full flex flex-row gap-2">
+        <div className="flex items-center justify-center size-8 bg-primary rounded-full">
+          <p>{props.agent.emoji}</p>
+        </div>
+        <div className="flex-1 bg-secondary border rounded-lg px-4 py-3">
+          <p className="text-sm">{props.message.data.content}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (props.message.type === "human" && props.message.data.content) {
+    return (
+      <div className="flex-1 border rounded-lg px-4 py-3">
+        <p className="text-sm">{props.message.data.content}</p>
+      </div>
+    );
+  }
+
+  // TODO: Don't show this message on production
+  return (
+    <div className="w-full border rounded-lg px-4 py-3">
+      <p className="text-sm text-muted-foreground">
+        {JSON.stringify(props.message, null, 2)}
+      </p>
     </div>
   );
 }

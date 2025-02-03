@@ -22,7 +22,9 @@ export default function NewAgentPage() {
 
       // Save agent data in MongoDB
       const { data } = await axios.post("/api/agents/new", {
-        name: "Super Agent",
+        name: "Simon",
+        description: "Liza's cat that helps navigate the crypto world",
+        emoji: "🐈",
       });
       const agent: Agent = data.data;
 
@@ -49,13 +51,17 @@ export default function NewAgentPage() {
 
   return (
     <main className="container py-6 lg:px-80">
-      <div className="flex items-center justify-center size-16 rounded-full bg-primary">
-        <BotIcon className="text-primary-foreground" />
+      <div className="flex items-center justify-center size-24 rounded-full bg-primary">
+        <BotIcon className="size-12 text-primary-foreground" />
       </div>
-      <h1 className="text-3xl font-extrabold tracking-tighter mt-2">
+      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
         New agent
       </h1>
-      <Separator className="my-4" />
+      <p className="text-muted-foreground mt-1">
+        Create a personalized AI agent with crypto features for your Mom or
+        other not-techie users
+      </p>
+      <Separator className="my-8" />
       <Button
         variant="default"
         disabled={isProsessing}
