@@ -1,5 +1,6 @@
 "use server";
 
+import { erc20ActionProvider } from "@/action-providers/erc20/erc20-action-provider";
 import { errorToString } from "@/lib/converters";
 import { findAgent, updateAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
@@ -20,7 +21,7 @@ import { createViemAccount } from "@privy-io/server-auth/viem";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-import { createWalletClient, http } from "viem";
+import { createWalletClient, Hex, http } from "viem";
 import { baseSepolia } from "viem/chains";
 import { z } from "zod";
 
@@ -55,7 +56,7 @@ export async function POST(
     );
     const account = await createViemAccount({
       walletId: agent.privyServerWallet.id,
-      address: agent.privyServerWallet.address as `0x${string}`,
+      address: agent.privyServerWallet.address as Hex,
       privy,
     });
 
@@ -79,7 +80,7 @@ export async function POST(
     const walletProvider = new ViemWalletProvider(client);
     const agentKit = await AgentKit.from({
       walletProvider: walletProvider,
-      actionProviders: [walletActionProvider()],
+      actionProviders: [walletActionProvider(), erc20ActionProvider(agent)],
       cdpApiKeyName: process.env.CDP_API_KEY_NAME,
       cdpApiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
         /\\n/g,
