@@ -25,3 +25,19 @@ export const TransferSchema = z
   })
   .strip()
   .describe("Instructions for transferring assets");
+
+/**
+ * Input schema for transfer by name action.
+ */
+export const TransferByNameSchema = z
+  .object({
+    amount: z.custom<bigint>().describe("The amount of the asset to transfer"),
+    contractAddress: z
+      .string()
+      .describe("The contract address of the token to transfer"),
+    destinationName: z
+      .string()
+      .describe("The name of person or organization to transfer the funds"),
+  })
+  .strip()
+  .describe("Instructions for transferring assets");
