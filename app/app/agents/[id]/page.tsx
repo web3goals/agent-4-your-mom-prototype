@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useError from "@/hooks/use-error";
 import { Agent } from "@/mongodb/models/agent";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HumanMessage, StoredMessage } from "@langchain/core/messages";
+import { StoredMessage } from "@langchain/core/messages";
 import axios from "axios";
 import { Loader2Icon, SendIcon } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -95,22 +95,13 @@ function AgentChat(props: {
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsProsessing(true);
-      // Save user message
-      const newAgent = props.agent;
-      newAgent.messages.push(
-        new HumanMessage({ content: values.message }).toDict()
-      );
-      props.onAgentUpdate(newAgent);
-      // Send user message to agent
       // TODO: Use email address from Privy
       const { data } = await axios.post(
         `/api/agents/${props.agent._id}/messages`,
         { message: values.message },
         { headers: { Authorization: "test@test.test" } }
       );
-      // Save agent response message
-      newAgent.messages = data.data;
-      props.onAgentUpdate(newAgent);
+      props.onAgentUpdate({ ...props.agent, messages: data.data });
       form.reset();
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");
