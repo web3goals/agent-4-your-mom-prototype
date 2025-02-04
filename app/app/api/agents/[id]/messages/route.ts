@@ -104,15 +104,17 @@ export async function POST(
       },
       { configurable: { thread_id: 42 } }
     );
+    const resultMessages = result.messages.map((message) => message.toDict());
 
     // Update agent data in MongoDB
     await updateAgent({
       id: agent._id as ObjectId,
-      newMessages: result.messages.map((message) => message.toDict()),
+      newMessages: resultMessages,
     });
 
     // Return the agent answer
-    return createSuccessApiResponse(result.messages.at(-1)?.content);
+    // return createSuccessApiResponse(result.messages.at(-1)?.content);
+    return createSuccessApiResponse(resultMessages);
   } catch (error) {
     console.error(
       `Failed to process ${request.method} request for "${

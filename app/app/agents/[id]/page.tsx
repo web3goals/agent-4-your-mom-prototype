@@ -15,11 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useError from "@/hooks/use-error";
 import { Agent } from "@/mongodb/models/agent";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  AIMessage,
-  HumanMessage,
-  StoredMessage,
-} from "@langchain/core/messages";
+import { HumanMessage, StoredMessage } from "@langchain/core/messages";
 import axios from "axios";
 import { Loader2Icon, SendIcon } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -113,7 +109,7 @@ function AgentChat(props: {
         { headers: { Authorization: "test@test.test" } }
       );
       // Save agent response message
-      newAgent.messages.push(new AIMessage({ content: data.data }).toDict());
+      newAgent.messages = data.data;
       props.onAgentUpdate(newAgent);
       form.reset();
     } catch (error) {
