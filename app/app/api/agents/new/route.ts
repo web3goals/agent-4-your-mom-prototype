@@ -13,6 +13,7 @@ const requestBodySchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   emoji: z.string().min(1),
+  usdtAddress: z.string().min(1),
 });
 
 export async function POST(request: NextRequest) {
@@ -43,15 +44,18 @@ export async function POST(request: NextRequest) {
     });
 
     // Create an agent
-    // TODO: Use this system prompt idea - https://docs.cdp.coinbase.com/agentkit/docs/quickstart#creating-your-first-agent
+    const systemMessageContent = [
+      "You are a helpful agent that helps with blockchain operations.",
+      "Your extra knowledge:",
+      `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.usdtAddress}.`,
+    ].join("\n\n");
     const agent: Agent = {
       name: bodyParseResult.data.name,
       description: bodyParseResult.data.description,
       emoji: bodyParseResult.data.emoji,
       messages: [
         new SystemMessage({
-          content:
-            "You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit.",
+          content: systemMessageContent,
         }).toDict(),
       ],
       privyServerWallet: {

@@ -25,6 +25,7 @@ export default function NewAgentPage() {
         name: "Simon",
         description: "Liza's cat that helps navigate the crypto world",
         emoji: "🐈",
+        usdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
       });
       const agent: Agent = data.data;
 
