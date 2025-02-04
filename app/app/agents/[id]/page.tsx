@@ -153,6 +153,7 @@ function AgentChat(props: {
   );
 }
 
+// Improve the card design using this code - https://github.dev/web3goals/crypto-bro-prototype/blob/main/app/app/chat/page.tsx
 function AgentMessageCard(props: { agent: Agent; message: StoredMessage }) {
   if (props.message.type === "ai" && props.message.data.content) {
     return (
@@ -178,9 +179,9 @@ function AgentMessageCard(props: { agent: Agent; message: StoredMessage }) {
   // TODO: Don't show this message on production
   return (
     <div className="w-full border rounded-lg px-4 py-3">
-      <p className="text-sm text-muted-foreground">
+      <pre className="text-sm text-muted-foreground whitespace-pre-wrap break-words">
         {JSON.stringify(props.message, null, 2)}
-      </p>
+      </pre>
     </div>
   );
 }
