@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
       nillionConfig.nodes.map(async (node) => {
         const { data } = await axios.post(
           `${node.url}/api/v1/data/read`,
-          { schema: nillionConfig.schemaCredentialsId, filter: {} },
+          {
+            schema: nillionConfig.schemaAddressBookId,
+            filter: { agent: "67a23fda811777bf6e263741" },
+          },
           {
             headers: {
               Authorization: `Bearer ${node.jwt}`,

@@ -22,4 +22,5 @@ export const nillionConfig = {
     },
   ],
   schemaCredentialsId: process.env.NILLION_SCHEMA_CREDENTIALS_ID as string,
+  schemaAddressBookId: process.env.NILLION_SCHEMA_ADDRESS_BOOK_ID as string,
 };

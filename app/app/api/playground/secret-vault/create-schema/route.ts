@@ -6,44 +6,40 @@ import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
 import axios from "axios";
 import { NextRequest } from "next/server";
 
-const credentialsCollectionData = {
-  _id: nillionConfig.schemaCredentialsId,
-  name: "Credentials",
-  keys: ["_id"],
-  schema: {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    type: "array",
-    items: {
-      type: "object",
-      properties: {
-        _id: {
-          type: "string",
-          format: "uuid",
-          coerce: true,
-        },
-        service: {
-          type: "string",
-        },
-        username: {
-          type: "string",
-        },
-        password: {
-          type: "string",
-        },
-        registered_at: {
-          type: "string",
-          format: "date-time",
-          coerce: true,
-        },
-      },
-      required: ["_id", "service", "username", "password", "registered_at"],
-      additionalProperties: false,
-    },
-  },
-};
-
 export async function POST(request: NextRequest) {
   try {
+    // Define request data
+    const requestData = {
+      _id: nillionConfig.schemaAddressBookId,
+      name: "Address Book",
+      keys: ["_id"],
+      schema: {
+        $schema: "http://json-schema.org/draft-07/schema#",
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            _id: {
+              type: "string",
+              format: "uuid",
+              coerce: true,
+            },
+            agent: {
+              type: "string",
+            },
+            name: {
+              type: "string",
+            },
+            address: {
+              type: "string",
+            },
+          },
+          required: ["_id", "agent", "name", "address"],
+          additionalProperties: false,
+        },
+      },
+    };
+
     // Detailed environment variable validation
     for (const node of nillionConfig.nodes) {
       if (!node.url) {
@@ -64,7 +60,7 @@ export async function POST(request: NextRequest) {
       nillionConfig.nodes.map(async (node) => {
         const { data } = await axios.post(
           `${node.url}/api/v1/schemas`,
-          credentialsCollectionData,
+          requestData,
           {
             headers: {
               Authorization: `Bearer ${node.jwt}`,
