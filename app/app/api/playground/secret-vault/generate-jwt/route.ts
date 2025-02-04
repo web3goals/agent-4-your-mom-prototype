@@ -1,3 +1,5 @@
+"use server";
+
 import { errorToString } from "@/lib/converters";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
 import { NextRequest } from "next/server";
