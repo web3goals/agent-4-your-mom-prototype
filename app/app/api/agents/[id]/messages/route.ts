@@ -74,7 +74,7 @@ export async function POST(
     // Initialize AgentKit with tools
     const client = createWalletClient({
       account,
-      chain: baseSepolia,
+      chain: baseSepolia, // TODO: Get this value from request body
       transport: http(),
     });
     const walletProvider = new ViemWalletProvider(client);
