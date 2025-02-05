@@ -168,7 +168,7 @@ Important notes:
           return { nodeName: node.name, data };
         })
       );
-      const address = results[0].data?.data?.[0]?.address;
+      const address = results[0].data?.data?.[0]?.address; // TODO: Decode value using nilQL
       if (!address) {
         return `There's no address for ${args.recipientName} in the address book`;
       }

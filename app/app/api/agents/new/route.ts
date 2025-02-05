@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
               _id: uuidv4(),
               agent: agent._id?.toString(),
               name: element.name.toLowerCase(),
-              address: element.address.toLowerCase(), // TODO: Encode using nilQL
+              address: element.address.toLowerCase(), // TODO: Encode value using nilQL
             })),
           },
           {

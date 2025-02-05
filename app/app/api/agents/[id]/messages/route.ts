@@ -63,9 +63,6 @@ export async function POST(
     // Check that the user has access to the agent
     // TODO:
 
-    // Load agent sensitive data from Nillion SecretVault
-    // TODO:
-
     // Initialize LLM
     const llm = new ChatOpenAI({
       model: "gpt-4o-mini",

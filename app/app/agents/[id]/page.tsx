@@ -24,7 +24,6 @@ import { useForm } from "react-hook-form";
 import ReactMarkdown from "react-markdown";
 import { z } from "zod";
 
-// TODO: Implement
 export default function AgentPage() {
   const { id } = useParams();
   const { handleError } = useError();

@@ -11,7 +11,6 @@ import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-// TODO: Implement
 export default function NewAgentPage() {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
@@ -39,8 +38,6 @@ export default function NewAgentPage() {
       });
       const agent: Agent = data.data;
 
-      // Show a succesfull create page with link to the agent with copy button and form to top up his balance
-      // TODO:
       toast({
         title: "Agent created ✨",
         description: agent._id?.toString(),
