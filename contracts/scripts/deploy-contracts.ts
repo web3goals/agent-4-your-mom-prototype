@@ -10,6 +10,11 @@ async function main() {
     const usdToken = await hre.viem.deployContract("USDToken", []);
     console.log(`Contract 'USDToken' deployed to: ${usdToken.address}`);
   }
+
+  if (!CONTRACTS[network].erc20Factory) {
+    const usdToken = await hre.viem.deployContract("ERC20Factory", []);
+    console.log(`Contract 'ERC20Factory' deployed to: ${usdToken.address}`);
+  }
 }
 
 main().catch((error) => {
