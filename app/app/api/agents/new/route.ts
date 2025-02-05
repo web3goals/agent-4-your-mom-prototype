@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     console.log("Privy Server Wallet is created");
 
     // Create an agent
+    // TODO: Show warning that recipient is probably a scammer if their address isn't in the address book
     const systemMessageContent = [
       "You are a helpful agent that helps with blockchain operations.",
       "You have an address book containing the names of people and organizations and their addresses to which you can send your funds.",
