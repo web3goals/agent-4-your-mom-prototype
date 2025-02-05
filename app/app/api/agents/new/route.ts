@@ -56,6 +56,8 @@ export async function POST(request: NextRequest) {
     // Create an agent
     const systemMessageContent = [
       "You are a helpful agent that helps with blockchain operations.",
+      "You have an address book containing the names of people and organizations and their addresses to which you can send your funds.",
+      "You cannot add new entries to the address book.",
       "Your extra knowledge:",
       `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.usdtAddress}.`,
     ].join("\n\n");

@@ -13,6 +13,20 @@ export const GetBalanceSchema = z
   .describe("Instructions for getting wallet balance");
 
 /**
+ * Input schema for get address action.
+ */
+export const GetAddressSchema = z
+  .object({
+    name: z
+      .string()
+      .describe(
+        "The name of a person or organization in the address book, e.g., 'Alice' or 'Kindness Network'"
+      ),
+  })
+  .strip()
+  .describe("Instructions for getting an address of a person or organization");
+
+/**
  * Input schema for transfer action.
  */
 export const TransferSchema = z
@@ -21,23 +35,11 @@ export const TransferSchema = z
     contractAddress: z
       .string()
       .describe("The contract address of the token to transfer"),
-    destination: z.string().describe("The destination to transfer the funds"),
+    recipientName: z
+      .string()
+      .describe(
+        "The name of a person or organization to transfer the funds from the address book"
+      ),
   })
   .strip()
   .describe("Instructions for transferring assets");
-
-// /**
-//  * Input schema for transfer by name action.
-//  */
-// export const TransferByNameSchema = z
-//   .object({
-//     amount: z.custom<bigint>().describe("The amount of the asset to transfer"),
-//     contractAddress: z
-//       .string()
-//       .describe("The contract address of the token to transfer"),
-//     destinationName: z
-//       .string()
-//       .describe("The name of person or organization to transfer the funds"),
-//   })
-//   .strip()
-//   .describe("Instructions for transferring assets");

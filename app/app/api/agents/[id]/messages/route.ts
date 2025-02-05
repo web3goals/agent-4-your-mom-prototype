@@ -1,6 +1,5 @@
 "use server";
 
-import { addressBookActionProvider } from "@/action-providers/address-book/provider";
 import { erc20ActionProvider } from "@/action-providers/erc20/provider";
 import { errorToString } from "@/lib/converters";
 import { findAgent, updateAgent } from "@/mongodb/services/agent-service";
@@ -81,11 +80,7 @@ export async function POST(
     const walletProvider = new ViemWalletProvider(client);
     const agentKit = await AgentKit.from({
       walletProvider: walletProvider,
-      actionProviders: [
-        walletActionProvider(),
-        erc20ActionProvider(),
-        addressBookActionProvider(agent),
-      ],
+      actionProviders: [walletActionProvider(), erc20ActionProvider(agent)],
       cdpApiKeyName: process.env.CDP_API_KEY_NAME,
       cdpApiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
         /\\n/g,
