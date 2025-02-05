@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
             data: bodyParseResult.data.addressBook.map((element) => ({
               _id: uuidv4(),
               agent: agent._id?.toString(),
-              name: element.name,
-              address: element.address, // TODO: Encode using nilQL
+              name: element.name.toLowerCase(),
+              address: element.address.toLowerCase(), // TODO: Encode using nilQL
             })),
           },
           {
