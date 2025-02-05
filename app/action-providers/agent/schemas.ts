@@ -1,9 +1,25 @@
 import { z } from "zod";
 
 /**
- * Input schema for get balance action.
+ * Input schema for get address from the address book action.
  */
-export const GetBalanceSchema = z
+export const GetAddressBookAddressSchema = z
+  .object({
+    name: z
+      .string()
+      .describe(
+        "The name of a person or organization in the address book, e.g., 'Alice' or 'Kindness Network'"
+      ),
+  })
+  .strip()
+  .describe(
+    "Instructions for getting an address of a person or organization from the address book"
+  );
+
+/**
+ * Input schema for get ERC20 balance action.
+ */
+export const GetErc20BalanceSchema = z
   .object({
     contractAddress: z
       .string()
@@ -13,28 +29,16 @@ export const GetBalanceSchema = z
   .describe("Instructions for getting wallet balance");
 
 /**
- * Input schema for get address action.
+ * Input schema for transfer ERC20 action.
  */
-export const GetAddressSchema = z
+export const TransferErc20Schema = z
   .object({
-    name: z
-      .string()
-      .describe(
-        "The name of a person or organization in the address book, e.g., 'Alice' or 'Kindness Network'"
-      ),
-  })
-  .strip()
-  .describe("Instructions for getting an address of a person or organization");
-
-/**
- * Input schema for transfer action.
- */
-export const TransferSchema = z
-  .object({
-    amount: z.custom<bigint>().describe("The amount of the asset to transfer"),
+    amount: z
+      .custom<bigint>()
+      .describe("The amount of the ERC20 asset to transfer"),
     contractAddress: z
       .string()
-      .describe("The contract address of the token to transfer"),
+      .describe("The contract address of the ERC20 token to transfer"),
     recipientName: z
       .string()
       .describe(
@@ -42,4 +46,4 @@ export const TransferSchema = z
       ),
   })
   .strip()
-  .describe("Instructions for transferring assets");
+  .describe("Instructions for transferring ERC20 assets");
