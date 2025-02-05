@@ -34,7 +34,7 @@ export const GetErc20BalanceSchema = z
 export const TransferErc20Schema = z
   .object({
     amount: z
-      .custom<bigint>()
+      .custom<bigint>() // TODO: Use number
       .describe("The amount of the ERC20 asset to transfer"),
     contractAddress: z
       .string()
@@ -44,6 +44,18 @@ export const TransferErc20Schema = z
       .describe(
         "The name of a person or organization to transfer the funds from the address book"
       ),
+  })
+  .strip()
+  .describe("Instructions for transferring ERC20 assets");
+
+/**
+ * Input schema for create ERC20 action.
+ */
+export const CreateErc20Schema = z
+  .object({
+    name: z.string().describe("The name for the ERC20 token to create"),
+    symbol: z.string().describe("The symbol for the ERC20 token to create"),
+    amount: z.number().describe("The amount of the ERC20 tokens to create"),
   })
   .strip()
   .describe("Instructions for transferring ERC20 assets");

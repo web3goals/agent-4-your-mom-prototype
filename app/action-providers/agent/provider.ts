@@ -1,19 +1,23 @@
+import { chainsConfig } from "@/config/chains";
+import { nillionConfig } from "@/config/nillion";
+import { Agent } from "@/mongodb/models/agent";
 import {
   ActionProvider,
   CreateAction,
   EvmWalletProvider,
+  ViemWalletProvider,
 } from "@coinbase/agentkit";
-import { encodeFunctionData, Hex } from "viem";
+import axios from "axios";
+import { encodeFunctionData, Hex, parseEther, parseEventLogs } from "viem";
 import { z } from "zod";
-import { abi } from "./constants";
+import { erc20Abi } from "./abi/erc20";
+import { erc20FactoryAbi } from "./abi/erc20Factory";
 import {
+  CreateErc20Schema,
   GetAddressBookAddressSchema,
   GetErc20BalanceSchema,
   TransferErc20Schema,
 } from "./schemas";
-import { nillionConfig } from "@/config/nillion";
-import axios from "axios";
-import { Agent } from "@/mongodb/models/agent";
 
 /**
  * An action provider with tools for the agent address book and ERC20 tokens.
@@ -103,7 +107,7 @@ This tool will get the balance of an ERC20 asset in the wallet. It takes the con
     try {
       const balance = await walletProvider.readContract({
         address: args.contractAddress as Hex,
-        abi,
+        abi: erc20Abi,
         functionName: "balanceOf",
         args: [walletProvider.getAddress()],
       });
@@ -172,7 +176,7 @@ Important notes:
       const hash = await walletProvider.sendTransaction({
         to: args.contractAddress as Hex,
         data: encodeFunctionData({
-          abi,
+          abi: erc20Abi,
           functionName: "transfer",
           args: [address as Hex, BigInt(args.amount)],
         }),
@@ -180,9 +184,70 @@ Important notes:
 
       await walletProvider.waitForTransactionReceipt(hash);
 
-      return `Transferred ${args.amount} of ${args.contractAddress} to ${args.recipientName}.\nTransaction hash for the transfer: ${hash}`;
+      return `Transferred ${args.amount} of ${args.contractAddress} to ${args.recipientName}`;
     } catch (error) {
       return `Error transferring the asset: ${error}`;
+    }
+  }
+  /**
+   * Create an ERC20 token.
+   *
+   * @param walletProvider - The wallet provider.
+   * @param args - The input arguments for the action.
+   * @returns A message containing the action details.
+   */
+  @CreateAction({
+    name: "create_erc20",
+    description: `
+This tool will create an ERC20 token.
+
+It takes the following inputs:
+- name: The name for the ERC20 token to create (e.g., 'Simon Cat Token')
+- symbol: The symbol for the ERC20 token to create (e.g., 'SCT')
+- amount: The amount of the ERC20 tokens to create
+        `,
+    schema: CreateErc20Schema,
+  })
+  async createErc20(
+    walletProvider: ViemWalletProvider,
+    args: z.infer<typeof CreateErc20Schema>
+  ): Promise<string> {
+    try {
+      // Get ERC20 Factory contract address
+      const chainConfig = chainsConfig.find(
+        (chain) =>
+          chain.chain.id.toString() ===
+          walletProvider.getNetwork().chainId?.toString()
+      );
+      const erc20Factory = chainConfig?.contracts.erc20Factory;
+      if (!erc20Factory) {
+        return `Chain ${
+          walletProvider.getNetwork().chainId
+        } is not supported for creating ERC20 tokens`;
+      }
+
+      // Send a transaction to create an ERC20 token
+      const hash = await walletProvider.sendTransaction({
+        to: erc20Factory as Hex,
+        data: encodeFunctionData({
+          abi: erc20FactoryAbi,
+          functionName: "createERC20",
+          args: [args.name, args.symbol, parseEther(args.amount.toString())],
+        }),
+      });
+      const receipt = await walletProvider.waitForTransactionReceipt(hash);
+
+      // Parse logs to get a created contract address
+      const logs = parseEventLogs({
+        abi: erc20FactoryAbi,
+        eventName: "ERC20Created",
+        logs: receipt.logs,
+      });
+      const address = logs[0].args.erc20;
+
+      return `ERC20 Token '${args.name}' is created, the contract address is ${address}`;
+    } catch (error) {
+      return `Error creating the asset: ${error}`;
     }
   }
 
