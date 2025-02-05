@@ -5,7 +5,7 @@ import { errorToString } from "@/lib/converters";
 import { Agent } from "@/mongodb/models/agent";
 import { insertAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
-import { SystemMessage } from "@langchain/core/messages";
+import { AIMessage, SystemMessage } from "@langchain/core/messages";
 import { PrivyClient } from "@privy-io/server-auth";
 import axios from "axios";
 import { NextRequest } from "next/server";
@@ -62,6 +62,10 @@ export async function POST(request: NextRequest) {
       "Your extra knowledge:",
       `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.usdtAddress}.`,
     ].join("\n\n");
+    const aiMessageContent = [
+      "Hello, my dear!",
+      "How about to check your wallet balance?",
+    ].join("\n\n");
     const agent: Agent = {
       name: bodyParseResult.data.name,
       description: bodyParseResult.data.description,
@@ -70,6 +74,7 @@ export async function POST(request: NextRequest) {
         new SystemMessage({
           content: systemMessageContent,
         }).toDict(),
+        new AIMessage({ content: aiMessageContent }).toDict(),
       ],
       privyServerWallet: {
         id: privyId,
