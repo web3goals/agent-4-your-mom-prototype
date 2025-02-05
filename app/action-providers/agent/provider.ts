@@ -173,12 +173,13 @@ Important notes:
         return `There's no address for ${args.recipientName} in the address book`;
       }
 
+      // Send a transaction to transfer tokens
       const hash = await walletProvider.sendTransaction({
         to: args.contractAddress as Hex,
         data: encodeFunctionData({
           abi: erc20Abi,
           functionName: "transfer",
-          args: [address as Hex, BigInt(args.amount)],
+          args: [address as Hex, parseEther(args.amount.toString())],
         }),
       });
 

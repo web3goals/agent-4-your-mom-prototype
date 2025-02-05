@@ -33,9 +33,7 @@ export const GetErc20BalanceSchema = z
  */
 export const TransferErc20Schema = z
   .object({
-    amount: z
-      .custom<bigint>() // TODO: Use number
-      .describe("The amount of the ERC20 asset to transfer"),
+    amount: z.number().describe("The amount of the ERC20 asset to transfer"),
     contractAddress: z
       .string()
       .describe("The contract address of the ERC20 token to transfer"),
