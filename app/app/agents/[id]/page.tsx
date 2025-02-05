@@ -21,6 +21,7 @@ import { Loader2Icon, SendIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
 import { z } from "zod";
 
 // TODO: Implement
@@ -162,7 +163,9 @@ function AgentMessageCard(props: { agent: Agent; message: StoredMessage }) {
           <p>{props.agent.emoji}</p>
         </div>
         <div className="flex-1 bg-secondary border rounded-lg px-4 py-3">
-          <p className="text-sm">{props.message.data.content}</p>
+          <AgentMessageCardFormattedContent
+            content={props.message.data.content}
+          />
         </div>
       </div>
     );
@@ -171,17 +174,61 @@ function AgentMessageCard(props: { agent: Agent; message: StoredMessage }) {
   if (props.message.type === "human" && props.message.data.content) {
     return (
       <div className="flex-1 border rounded-lg px-4 py-3">
-        <p className="text-sm">{props.message.data.content}</p>
+        <AgentMessageCardFormattedContent
+          content={props.message.data.content}
+        />
       </div>
     );
   }
 
-  // TODO: Don't show this message on production
+  return <></>;
+
+  // Component for debugging
+  // return (
+  //   <div className="w-full border rounded-lg px-4 py-3">
+  //     <pre className="text-sm text-muted-foreground whitespace-pre-wrap break-words">
+  //       {JSON.stringify(props.message, null, 2)}
+  //     </pre>
+  //   </div>
+  // );
+}
+
+function AgentMessageCardFormattedContent(props: { content: string }) {
   return (
-    <div className="w-full border rounded-lg px-4 py-3">
-      <pre className="text-sm text-muted-foreground whitespace-pre-wrap break-words">
-        {JSON.stringify(props.message, null, 2)}
-      </pre>
-    </div>
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => {
+          return (
+            <p className="text-sm [&:not(:first-child)]:mt-4">{children}</p>
+          );
+        },
+        a: ({ href, children }) => {
+          return (
+            <a
+              href={href}
+              target="_blank"
+              className="underline underline-offset-4"
+            >
+              {children}
+            </a>
+          );
+        },
+        ul: ({ children }) => {
+          return (
+            <ul className="text-sm [&:not(:first-child)]:mt-4">{children}</ul>
+          );
+        },
+        ol: ({ children }) => {
+          return (
+            <ol className="text-sm [&:not(:first-child)]:mt-4">{children}</ol>
+          );
+        },
+        li: ({ children }) => {
+          return <li className="[&:not(:first-child)]:mt-4">{children}</li>;
+        },
+      }}
+    >
+      {props.content}
+    </ReactMarkdown>
   );
 }

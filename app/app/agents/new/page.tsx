@@ -39,9 +39,6 @@ export default function NewAgentPage() {
       });
       const agent: Agent = data.data;
 
-      // Save agent sensitive data in Nillion SecretVault (do it in API)
-      // TODO:
-
       // Show a succesfull create page with link to the agent with copy button and form to top up his balance
       // TODO:
       toast({
