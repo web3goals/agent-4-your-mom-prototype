@@ -8,6 +8,6 @@ export const CONTRACTS: {
 } = {
   baseSepolia: {
     usdToken: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
-    erc20Factory: "0x9b18515b74ef6115a673c6d01c454d8f72f84177",
+    erc20Factory: "0x4f316c6536ce3ee94de802a9efdb20484ec4bdf9",
   },
 };
