@@ -12,13 +12,13 @@ import axios from "axios";
 import { Agent } from "@/mongodb/models/agent";
 
 /**
- * An action provider for ERC20 tokens.
+ * An action provider with tools for the agent address book and ERC20 tokens.
  */
-export class ERC20ActionProvider extends ActionProvider {
+export class AgentActionProvider extends ActionProvider {
   agent: Agent;
 
   constructor(agent: Agent) {
-    super("erc20", []);
+    super("agent", []);
     this.agent = agent;
   }
 
@@ -194,5 +194,5 @@ Important notes:
   };
 }
 
-export const erc20ActionProvider = (agent: Agent) =>
-  new ERC20ActionProvider(agent);
+export const agentActionProvider = (agent: Agent) =>
+  new AgentActionProvider(agent);
