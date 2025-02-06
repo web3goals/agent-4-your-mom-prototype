@@ -7,7 +7,6 @@ import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
-// TODO: Use access token from Privy instead of email in authorization header
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -30,7 +29,9 @@ export async function GET(
     }
 
     // Check that the user has access to the agent
-    // TODO:
+    if (authorization.split(" ")[1] !== agent.user.email) {
+      return createFailedApiResponse({ message: "Access denied" }, 401);
+    }
 
     // Return agent data
     return createSuccessApiResponse(agent);

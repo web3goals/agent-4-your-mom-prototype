@@ -6,6 +6,7 @@ import { ToastAction } from "@/components/ui/toast";
 import useError from "@/hooks/use-error";
 import { toast } from "@/hooks/use-toast";
 import { Agent } from "@/mongodb/models/agent";
+import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
@@ -14,17 +15,32 @@ import { useState } from "react";
 export default function NewAgentPage() {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
+  const { ready, authenticated, user } = usePrivy();
 
   async function handleSubmit() {
     try {
       setIsProsessing(true);
 
+      if (!ready || !authenticated || !user) {
+        toast({
+          variant: "destructive",
+          title: "Please login to create an agent :(",
+        });
+        return;
+      }
+
       // Save agent data in MongoDB
       const { data } = await axios.post("/api/agents/new", {
+        creator: {
+          id: user.id,
+        },
         name: "Simon",
         description: "Liza's cat that helps navigate the crypto world",
         emoji: "🐈",
-        usdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
+        user: {
+          name: "Liza",
+          email: "vampirenish666@gmail.com",
+        },
         addressBook: [
           {
             name: "Alice",
@@ -41,6 +57,9 @@ export default function NewAgentPage() {
         //   accessToken: "UNDEFINED",
         //   accessTokenSecret: "UNDEFINED",
         // },
+        extra: {
+          usdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
+        },
       });
       const agent: Agent = data.data;
 

@@ -3,16 +3,23 @@ import { ObjectId } from "mongodb";
 
 export class Agent {
   constructor(
+    public creator: {
+      id: string;
+    },
+    public createdDate: Date,
     public name: string,
     public description: string,
     public emoji: string,
     public messages: StoredMessage[],
+    public user: {
+      name: string;
+      email: string;
+    },
     public privyServerWallet: {
       id: string;
       address: string;
       chainType: string;
     },
-    public createdDate: Date,
     public twitterAccount?: {
       apiKey: string;
       apiSecret: string;

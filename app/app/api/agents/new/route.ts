@@ -18,10 +18,16 @@ const requestBodyAddressBookElementSchema = z.object({
 });
 
 const requestBodySchema = z.object({
+  creator: z.object({
+    id: z.string().min(1),
+  }),
   name: z.string().min(1),
   description: z.string().min(1),
   emoji: z.string().min(1),
-  usdtAddress: z.string().min(1),
+  user: z.object({
+    name: z.string().min(1),
+    email: z.string().min(1),
+  }),
   addressBook: z.array(requestBodyAddressBookElementSchema),
   twitterAccount: z
     .object({
@@ -31,6 +37,9 @@ const requestBodySchema = z.object({
       accessTokenSecret: z.string().min(1),
     })
     .optional(),
+  extra: z.object({
+    usdtAddress: z.string().min(1),
+  }),
 });
 
 export async function POST(request: NextRequest) {
@@ -68,16 +77,24 @@ export async function POST(request: NextRequest) {
       "You have an address book containing the names of people and organizations and their addresses to which you can send your funds.",
       "You cannot add new entries to the address book.",
       "Your extra knowledge:",
-      `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.usdtAddress}.`,
+      `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.extra.usdtAddress}.`,
     ].join("\n\n");
     const aiMessageContent = [
       "Hello, my dear!",
       "How about to check your wallet balance?",
     ].join("\n\n");
     const agent: Agent = {
+      creator: {
+        id: bodyParseResult.data.creator.id,
+      },
+      createdDate: new Date(),
       name: bodyParseResult.data.name,
       description: bodyParseResult.data.description,
       emoji: bodyParseResult.data.emoji,
+      user: {
+        name: bodyParseResult.data.user.name,
+        email: bodyParseResult.data.user.email,
+      },
       messages: [
         new SystemMessage({
           content: systemMessageContent,
@@ -98,7 +115,6 @@ export async function POST(request: NextRequest) {
             bodyParseResult.data.twitterAccount.accessTokenSecret,
         },
       }),
-      createdDate: new Date(),
     };
     const agentId = await insertAgent(agent);
     agent._id = agentId;

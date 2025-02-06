@@ -61,6 +61,11 @@ export async function POST(
       return createFailedApiResponse({ message: "Not found" }, 404);
     }
 
+    // Check that the user has access to the agent
+    if (authorization.split(" ")[1] !== agent.user.email) {
+      return createFailedApiResponse({ message: "Access denied" }, 401);
+    }
+
     // Get a agent viem account from a Privy server wallet
     const privy = new PrivyClient(
       process.env.PRIVY_APP_ID as string,
@@ -72,9 +77,6 @@ export async function POST(
       privy,
     });
 
-    // Check that the user has access to the agent
-    // TODO:
-
     // Initialize LLM
     const llm = new ChatOpenAI({
       model: "gpt-4o-mini",
@@ -83,7 +85,7 @@ export async function POST(
     // Initialize AgentKit with tools
     const client = createWalletClient({
       account,
-      chain: baseSepolia, // TODO: Get this value from request body
+      chain: baseSepolia, // TODO: Get this value from agent data
       transport: http(),
     });
     const walletProvider = new ViemWalletProvider(client);
