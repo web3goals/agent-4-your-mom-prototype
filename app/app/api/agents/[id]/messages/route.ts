@@ -38,10 +38,21 @@ export async function POST(
     // Get and parse request data
     const { id } = await params;
     const authorization = (await headers()).get("Authorization");
+    if (!authorization) {
+      return createFailedApiResponse(
+        { message: "Request headers invalid: Authorization is undefined" },
+        400
+      );
+    }
     const body = await request.json();
     const bodyParseResult = requestBodySchema.safeParse(body);
-    if (!authorization || !bodyParseResult.success) {
-      return createFailedApiResponse({ message: "Request invalid" }, 400);
+    if (!bodyParseResult.success) {
+      return createFailedApiResponse(
+        {
+          message: `Request body invalid: ${JSON.stringify(bodyParseResult)}`,
+        },
+        400
+      );
     }
 
     // Load agent data using MongoDB

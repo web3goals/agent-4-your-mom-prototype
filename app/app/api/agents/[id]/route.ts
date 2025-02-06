@@ -17,7 +17,10 @@ export async function GET(
     const { id } = await params;
     const authorization = (await headers()).get("Authorization");
     if (!authorization) {
-      return createFailedApiResponse({ message: "Request invalid" }, 400);
+      return createFailedApiResponse(
+        { message: "Request headers invalid: Authorization is undefined" },
+        400
+      );
     }
 
     // Load agent data using MongoDB
