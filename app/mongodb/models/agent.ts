@@ -13,6 +13,12 @@ export class Agent {
       chainType: string;
     },
     public createdDate: Date,
+    public twitterAccount?: {
+      apiKey: string;
+      apiSecret: string;
+      accessToken: string;
+      accessTokenSecret: string;
+    },
     public _id?: ObjectId
   ) {}
 }

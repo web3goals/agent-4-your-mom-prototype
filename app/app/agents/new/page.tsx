@@ -35,6 +35,12 @@ export default function NewAgentPage() {
             address: "0x3F121f9a16bd6C83D325985417aDA3FE0f517B7D",
           },
         ],
+        // twitterAccount: {
+        //   apiKey: "UNDEFINED",
+        //   apiSecret: "UNDEFINED",
+        //   accessToken: "UNDEFINED",
+        //   accessTokenSecret: "UNDEFINED",
+        // },
       });
       const agent: Agent = data.data;
 

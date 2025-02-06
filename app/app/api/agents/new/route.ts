@@ -23,6 +23,14 @@ const requestBodySchema = z.object({
   emoji: z.string().min(1),
   usdtAddress: z.string().min(1),
   addressBook: z.array(requestBodyAddressBookElementSchema),
+  twitterAccount: z
+    .object({
+      apiKey: z.string().min(1),
+      apiSecret: z.string().min(1),
+      accessToken: z.string().min(1),
+      accessTokenSecret: z.string().min(1),
+    })
+    .optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -33,7 +41,7 @@ export async function POST(request: NextRequest) {
     if (!bodyParseResult.success) {
       return createFailedApiResponse(
         {
-          message: "Request invalid",
+          message: `Request body invalid: ${JSON.stringify(bodyParseResult)}`,
         },
         400
       );
@@ -81,6 +89,15 @@ export async function POST(request: NextRequest) {
         address: privyAddress,
         chainType: privyChainType,
       },
+      ...(bodyParseResult.data.twitterAccount && {
+        twitterAccount: {
+          apiKey: bodyParseResult.data.twitterAccount.apiKey,
+          apiSecret: bodyParseResult.data.twitterAccount.apiSecret,
+          accessToken: bodyParseResult.data.twitterAccount.accessToken,
+          accessTokenSecret:
+            bodyParseResult.data.twitterAccount.accessTokenSecret,
+        },
+      }),
       createdDate: new Date(),
     };
     const agentId = await insertAgent(agent);
