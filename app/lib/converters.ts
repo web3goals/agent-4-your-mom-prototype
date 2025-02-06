@@ -1,3 +1,4 @@
+import { User } from "@privy-io/react-auth";
 import { AxiosError } from "axios";
 
 export function errorToString(error: unknown): string {
@@ -12,4 +13,8 @@ export function errorToString(error: unknown): string {
     });
   }
   return message;
+}
+
+export function privyUserToEmail(user: User | null): string | undefined {
+  return user?.email?.address || user?.google?.email;
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { siteConfig } from "@/config/site";
-import { GithubIcon, MenuIcon } from "lucide-react";
+import { usePrivy } from "@privy-io/react-auth";
+import { GithubIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -9,10 +10,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { privyUserToEmail } from "@/lib/converters";
 
 export function SiteHeader() {
+  const { ready, authenticated, user, login, logout } = usePrivy();
+
   return (
     <header className="sticky top-0 z-40 bg-card border-b">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -45,6 +50,24 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              {ready && !authenticated && (
+                <DropdownMenuItem onClick={() => login()}>
+                  <LogInIcon />
+                  <span>Login</span>
+                </DropdownMenuItem>
+              )}
+              {ready && authenticated && (
+                <DropdownMenuItem onClick={() => logout()}>
+                  <LogOutIcon />
+                  <span>
+                    Logout{" "}
+                    <p className="text-xs text-muted-foreground">
+                      {privyUserToEmail(user)}
+                    </p>
+                  </span>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
               <Link href={siteConfig.links.github} target="_blank">
                 <DropdownMenuItem>
                   <GithubIcon />

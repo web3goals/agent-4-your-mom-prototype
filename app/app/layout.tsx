@@ -1,4 +1,5 @@
 import { DevIndicator } from "@/components/dev-indicator";
+import CustomPrivyProvider from "@/components/custom-privy-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -47,13 +48,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative flex flex-col min-h-screen">
-            <SiteHeader />
-            <div className="flex-1">{children}</div>
-            <SiteFooter />
-            <Toaster />
-          </div>
-          <DevIndicator />
+          <CustomPrivyProvider>
+            <div className="relative flex flex-col min-h-screen">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <SiteFooter />
+              <Toaster />
+            </div>
+            <DevIndicator />
+          </CustomPrivyProvider>
         </ThemeProvider>
       </body>
     </html>
