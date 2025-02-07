@@ -85,7 +85,7 @@ export function NewAgentStep5Section(props: {
   }
 
   return (
-    <main className="container py-6 lg:px-80">
+    <main className="container py-16 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
         <XIcon className="size-12 text-primary-foreground" />
       </div>

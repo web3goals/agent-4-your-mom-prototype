@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <main className="container py-6 lg:px-80">
+    <main className="container py-16 lg:px-80">
       <div className="flex flex-col items-center">
         <Image
           src="/images/cover.png"
@@ -17,7 +17,7 @@ export default function LandingPage() {
           className="w-full rounded-xl"
         />
       </div>
-      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter max-w-[680px] mt-4">
+      <h1 className="text-4xl font-extrabold tracking-tighter max-w-[680px] mt-4">
         Help your mom venture into the crypto world with a personalized AI agent{" "}
       </h1>
       <p className="font-medium tracking-tight text-muted-foreground max-w-[680px] mt-2">

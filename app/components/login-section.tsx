@@ -9,7 +9,7 @@ export function LoginSection() {
   const { login } = usePrivy();
 
   return (
-    <main className="container py-6 lg:px-80">
+    <main className="container py-16 lg:px-80">
       <div>
         <div className="flex items-center justify-center size-24 rounded-full bg-primary">
           <LogInIcon className="size-12 text-primary-foreground" />
