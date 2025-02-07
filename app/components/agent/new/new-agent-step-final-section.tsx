@@ -7,7 +7,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
-import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
+import { ArrowRightIcon, DrumIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function NewAgentFinalStepSection(props: {
@@ -52,13 +52,12 @@ export function NewAgentFinalStepSection(props: {
   return (
     <main className="container py-6 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
-        <BotIcon className="size-12 text-primary-foreground" />
+        <DrumIcon className="size-12 text-primary-foreground" />
       </div>
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
         Final step
       </h1>
-      {/* TODO: Define step description */}
-      <p className="text-muted-foreground mt-1">...</p>
+      <p className="text-muted-foreground mt-1">All right, are you ready?</p>
       <Separator className="my-8" />
       <Button
         variant="default"
@@ -70,7 +69,7 @@ export function NewAgentFinalStepSection(props: {
         ) : (
           <ArrowRightIcon />
         )}
-        Create
+        Create agent
       </Button>
     </main>
   );

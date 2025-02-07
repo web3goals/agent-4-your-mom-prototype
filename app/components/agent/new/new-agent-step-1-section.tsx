@@ -1,11 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { NewAgentRequestData } from "@/types/new-agent-request-data";
-import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRightIcon, Loader2Icon, UserIcon } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export function NewAgentStep1Section(props: {
   newAgentRequestData: NewAgentRequestData;
@@ -16,13 +28,28 @@ export function NewAgentStep1Section(props: {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
 
-  async function handleSubmit() {
+  const formSchema = z.object({
+    name: z.string().min(3),
+    email: z.string().email().min(1),
+  });
+
+  // TODO: Delete default values for production
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "Mary",
+      email: "vampirenish666@gmail.com",
+    },
+  });
+
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsProsessing(true);
       props.onNewAgentRequestDataUpdate({
         ...props.newAgentRequestData,
         user: {
-          name: "Mary",
-          email: "vampirenish666@gmail.com",
+          name: values.name,
+          email: values.email,
         },
       });
     } catch (error) {
@@ -35,26 +62,61 @@ export function NewAgentStep1Section(props: {
   return (
     <main className="container py-6 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
-        <BotIcon className="size-12 text-primary-foreground" />
+        <UserIcon className="size-12 text-primary-foreground" />
       </div>
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
         Step #1
       </h1>
-      {/* TODO: Define step description */}
-      <p className="text-muted-foreground mt-1">...</p>
+      <p className="text-muted-foreground mt-1">
+        Who are you creating this agent for?
+      </p>
       <Separator className="my-8" />
-      <Button
-        variant="default"
-        disabled={isProsessing}
-        onClick={() => handleSubmit()}
-      >
-        {isProsessing ? (
-          <Loader2Icon className="animate-spin" />
-        ) : (
-          <ArrowRightIcon />
-        )}
-        Next step
-      </Button>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name *</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Alice"
+                    disabled={isProsessing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email *</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="alice@domain.com"
+                    disabled={isProsessing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" variant="default" disabled={isProsessing}>
+            {isProsessing ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <ArrowRightIcon />
+            )}
+            Next step
+          </Button>
+        </form>
+      </Form>
     </main>
   );
 }

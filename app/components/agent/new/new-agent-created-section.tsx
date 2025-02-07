@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Agent } from "@/mongodb/models/agent";
-import { ArrowRightIcon, BotIcon } from "lucide-react";
+import { ArrowRightIcon, PartyPopperIcon } from "lucide-react";
 import Link from "next/link";
 import Confetti from "react-confetti";
 
@@ -11,7 +11,7 @@ export function NewAgentCreatedSection(props: { newAgent: Agent }) {
   return (
     <main className="container py-6 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
-        <BotIcon className="size-12 text-primary-foreground" />
+        <PartyPopperIcon className="size-12 text-primary-foreground" />
       </div>
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
         Agent created
