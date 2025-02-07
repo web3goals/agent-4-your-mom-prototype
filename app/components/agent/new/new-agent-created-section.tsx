@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Agent } from "@/mongodb/models/agent";
 import { ArrowRightIcon, BotIcon } from "lucide-react";
 import Link from "next/link";
+import Confetti from "react-confetti";
 
 export function NewAgentCreatedSection(props: { newAgent: Agent }) {
   return (
@@ -23,6 +24,11 @@ export function NewAgentCreatedSection(props: { newAgent: Agent }) {
           <ArrowRightIcon /> Open agent
         </Button>
       </Link>
+      <Confetti
+        width={document.body.clientWidth}
+        height={document.body.scrollHeight}
+        recycle={false}
+      />
     </main>
   );
 }
