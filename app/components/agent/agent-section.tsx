@@ -66,12 +66,15 @@ export function AgentSection(props: {
   return (
     <main className="container py-6 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
-        <p className="text-4xl">{props.agent.emoji}</p>
+        <p className="text-4xl">{props.agent.personality.emoji}</p>
       </div>
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
-        {props.agent.name}
+        {props.agent.personality.name}
       </h1>
-      <p className="text-muted-foreground mt-1">{props.agent.description}</p>
+      <p className="text-muted-foreground mt-1">
+        I am your personal AI agent who will help you venture into the crypto
+        world
+      </p>
       <Separator className="my-8" />
       <div className="flex flex-col gap-4">
         <Form {...form}>

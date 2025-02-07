@@ -3,20 +3,19 @@ import { ObjectId } from "mongodb";
 
 export class Agent {
   constructor(
-    public creator: {
-      id: string;
-    },
+    public creatorId: string,
     public createdDate: Date,
-    public name: string,
-    public description: string,
-    public emoji: string,
-    public chainId: number,
     public messages: StoredMessage[],
     public user: {
       name: string;
       email: string;
-      description: string;
     },
+    public personality: {
+      name: string;
+      emoji: string;
+      features: string;
+    },
+    public chainId: number,
     public privyServerWallet: {
       id: string;
       address: string;

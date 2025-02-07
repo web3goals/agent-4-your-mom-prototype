@@ -16,7 +16,7 @@ export function NewAgentSection() {
     useState<NewAgentRequestData>({});
   const [newAgent, setNewAgent] = useState<Agent | undefined>();
 
-  if (!newAgenRequesttData.agent) {
+  if (!newAgenRequesttData.user) {
     return (
       <NewAgentStep1Section
         newAgentRequestData={newAgenRequesttData}
@@ -27,7 +27,7 @@ export function NewAgentSection() {
     );
   }
 
-  if (!newAgenRequesttData.user) {
+  if (!newAgenRequesttData.personality) {
     return (
       <NewAgentStep2Section
         newAgentRequestData={newAgenRequesttData}

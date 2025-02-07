@@ -26,13 +26,20 @@ export function NewAgentFinalStepSection(props: {
         throw new Error("User not defined");
       }
 
+      // Prepare a request data
+      const requestData = { ...props.newAgentRequestData };
+      requestData.creatorId = user.id;
+      if (
+        !props.newAgentRequestData.twitter?.apiKey ||
+        !props.newAgentRequestData.twitter?.apiSecret ||
+        !props.newAgentRequestData.twitter?.accessToken ||
+        !props.newAgentRequestData.twitter?.accessTokenSecret
+      ) {
+        requestData.twitter = undefined;
+      }
+
       // Send request to create an agent
-      const { data } = await axios.post("/api/agents/new", {
-        ...props.newAgentRequestData,
-        creator: {
-          id: user.id,
-        },
-      } as NewAgentRequestData);
+      const { data } = await axios.post("/api/agents/new", requestData);
       const agent: Agent = data.data;
       props.onAgentDefine(agent);
     } catch (error) {

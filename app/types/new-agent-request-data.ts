@@ -1,24 +1,18 @@
 export type NewAgentRequestData = {
-  creator?: {
-    id: string;
-  };
-  agent?: {
-    name: string;
-    description: string;
-    emoji: string;
-  };
-
+  creatorId?: string;
   user?: {
     name: string;
     email: string;
-    description: string;
   };
-
+  personality?: {
+    name: string;
+    emoji: string;
+    features: string;
+  };
   chain?: {
     id: number;
     usdtAddress: string;
   };
-
   addressBook?: { name: string; address: string }[];
   twitter?: {
     apiKey: string | undefined;

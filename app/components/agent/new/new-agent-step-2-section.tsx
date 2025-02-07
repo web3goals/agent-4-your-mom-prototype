@@ -20,10 +20,15 @@ export function NewAgentStep2Section(props: {
     try {
       props.onNewAgentRequestDataUpdate({
         ...props.newAgentRequestData,
-        user: {
-          name: "Liza",
-          email: "vampirenish666@gmail.com",
-          description: "The Mom",
+        personality: {
+          name: "Simon",
+          emoji: "🐈",
+          features: [
+            "You are created for a Mary, who is a woman who loves cats very much.",
+            "She has three cats: Oliver, Bella and Simba.",
+            "Act like a fouth cat in her family.",
+            "Try to use some cat phrases in your answers like 'meow', 'purr', etc.",
+          ].join(" "),
         },
       });
     } catch (error) {

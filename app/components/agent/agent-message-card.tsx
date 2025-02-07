@@ -12,7 +12,7 @@ export function AgentMessageCard(props: {
     return (
       <div className="w-full flex flex-row gap-2">
         <div className="flex items-center justify-center size-8 bg-primary rounded-full">
-          <p>{props.agent.emoji}</p>
+          <p>{props.agent.personality.emoji}</p>
         </div>
         <div className="flex-1 bg-secondary border rounded-lg px-4 py-3">
           <AgentMessageCardContent content={props.message.data.content} />

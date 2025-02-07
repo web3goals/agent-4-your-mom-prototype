@@ -18,18 +18,15 @@ const requestBodyAddressBookElementSchema = z.object({
 });
 
 const requestBodySchema = z.object({
-  creator: z.object({
-    id: z.string().min(1),
-  }),
-  agent: z.object({
-    name: z.string().min(1),
-    description: z.string().min(1),
-    emoji: z.string().min(1),
-  }),
+  creatorId: z.string().min(1),
   user: z.object({
     name: z.string().min(1),
     email: z.string().min(1),
-    description: z.string().min(1),
+  }),
+  personality: z.object({
+    name: z.string().min(1),
+    emoji: z.string().min(1),
+    features: z.string().min(1),
   }),
   chain: z.object({
     id: z.number(),
@@ -77,36 +74,38 @@ export async function POST(request: NextRequest) {
     // Create an agent
     // TODO: Show warning that recipient is probably a scammer if their address isn't in the address book
     const systemMessageContent = [
-      "You are a helpful agent that helps with blockchain operations.",
-      "You have an address book containing the names of people and organizations and their addresses to which you can send your funds.",
+      `You are a helpful agent named ${bodyParseResult.data.personality.name}.`,
+      `You goal is to help ${bodyParseResult.data.user.name} with blockchain and other operations.`,
+      `That is the information about ${bodyParseResult.data.user.name} that you should use to make your answers more friendly: '${bodyParseResult.data.personality.features}'.`,
+      "You have an address book containing the names of people and organizations and their addresses to which you can send user's funds.",
       "You cannot add new entries to the address book.",
+      "If a user tries to send their funds to an unknown person or organization, tell them that the recipient is probably a scammer, otherwise their address would be in the address book",
       "Your extra knowledge:",
       `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.chain.usdtAddress}.`,
     ].join("\n\n");
     const aiMessageContent = [
-      `Hello, my dear ${bodyParseResult.data.user.name}!`,
+      `Hello, my **dear ${bodyParseResult.data.user.name}!**`,
       "How about to check your wallet balance?",
     ].join("\n\n");
     const agent: Agent = {
-      creator: {
-        id: bodyParseResult.data.creator.id,
-      },
+      creatorId: bodyParseResult.data.creatorId,
       createdDate: new Date(),
-      name: bodyParseResult.data.agent.name,
-      description: bodyParseResult.data.agent.description,
-      emoji: bodyParseResult.data.agent.emoji,
-      chainId: bodyParseResult.data.chain.id,
-      user: {
-        name: bodyParseResult.data.user.name,
-        email: bodyParseResult.data.user.email,
-        description: bodyParseResult.data.user.description,
-      },
       messages: [
         new SystemMessage({
           content: systemMessageContent,
         }).toDict(),
         new AIMessage({ content: aiMessageContent }).toDict(),
       ],
+      user: {
+        name: bodyParseResult.data.user.name,
+        email: bodyParseResult.data.user.email,
+      },
+      personality: {
+        name: bodyParseResult.data.personality.name,
+        emoji: bodyParseResult.data.personality.emoji,
+        features: bodyParseResult.data.personality.features,
+      },
+      chainId: bodyParseResult.data.chain.id,
       privyServerWallet: {
         id: privyId,
         address: privyAddress,

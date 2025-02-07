@@ -20,10 +20,9 @@ export function NewAgentStep1Section(props: {
     try {
       props.onNewAgentRequestDataUpdate({
         ...props.newAgentRequestData,
-        agent: {
-          name: "Simon",
-          description: "Liza's cat that helps navigate the crypto world",
-          emoji: "🐈",
+        user: {
+          name: "Mary",
+          email: "vampirenish666@gmail.com",
         },
       });
     } catch (error) {

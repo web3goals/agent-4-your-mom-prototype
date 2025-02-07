@@ -21,10 +21,10 @@ export function NewAgentStep5Section(props: {
       props.onNewAgentRequestDataUpdate({
         ...props.newAgentRequestData,
         twitter: {
-          apiKey: "UNKNOWN",
-          apiSecret: "UNKNOWN",
-          accessToken: "UNKNOWN",
-          accessTokenSecret: "UNKNOWN",
+          apiKey: "",
+          apiSecret: "",
+          accessToken: "",
+          accessTokenSecret: "",
         },
       });
     } catch (error) {
