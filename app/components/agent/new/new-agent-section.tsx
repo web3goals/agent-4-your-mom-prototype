@@ -1,105 +1,80 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ToastAction } from "@/components/ui/toast";
-import useError from "@/hooks/use-error";
-import { toast } from "@/hooks/use-toast";
 import { Agent } from "@/mongodb/models/agent";
-import { usePrivy } from "@privy-io/react-auth";
-import axios from "axios";
-import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
-import Link from "next/link";
+import { NewAgentStep1Data } from "@/types/new-agent-step-1-data";
+import { NewAgentStep2Data } from "@/types/new-agent-step-2-data";
+import { NewAgentStep3Data } from "@/types/new-agent-step-3-data";
+import { NewAgentStep4Data } from "@/types/new-agent-step-4-data";
+import { NewAgentStep5Data } from "@/types/new-agent-step-5-data";
 import { useState } from "react";
+import { NewAgentStep1Section } from "./new-agent-step-1-section";
+import { NewAgentStep2Section } from "./new-agent-step-2-section";
+import { NewAgentStep3Section } from "./new-agent-step-3-section";
+import { NewAgentStep4Section } from "./new-agent-step-4-section";
+import { NewAgentStep5Section } from "./new-agent-step-5-section";
+import { NewAgentFinalStepSection } from "./new-agent-step-final-section";
+import { NewAgentCreatedSection } from "./new-agent-created-section";
 
 export function NewAgentSection() {
-  const { handleError } = useError();
-  const [isProsessing, setIsProsessing] = useState(false);
-  const { user } = usePrivy();
+  const [step1Data, setStep1Data] = useState<NewAgentStep1Data | undefined>();
+  const [step2Data, setStep2Data] = useState<NewAgentStep2Data | undefined>();
+  const [step3Data, setStep3Data] = useState<NewAgentStep3Data | undefined>();
+  const [step4Data, setStep4Data] = useState<NewAgentStep4Data | undefined>();
+  const [step5Data, setStep5Data] = useState<NewAgentStep5Data | undefined>();
+  const [agent, setAgent] = useState<Agent | undefined>();
 
-  async function handleSubmit() {
-    try {
-      setIsProsessing(true);
-
-      if (!user) {
-        throw new Error("User not defined");
-      }
-
-      // Save agent data in MongoDB
-      const { data } = await axios.post("/api/agents/new", {
-        creator: {
-          id: user.id,
-        },
-        name: "Simon",
-        description: "Liza's cat that helps navigate the crypto world",
-        emoji: "🐈",
-        user: {
-          name: "Liza",
-          email: "vampirenish666@gmail.com",
-        },
-        addressBook: [
-          {
-            name: "Alice",
-            address: "0x4306D7a79265D2cb85Db0c5a55ea5F4f6F73C4B1",
-          },
-          {
-            name: "Bob",
-            address: "0x3F121f9a16bd6C83D325985417aDA3FE0f517B7D",
-          },
-        ],
-        // twitterAccount: {
-        //   apiKey: "UNDEFINED",
-        //   apiSecret: "UNDEFINED",
-        //   accessToken: "UNDEFINED",
-        //   accessTokenSecret: "UNDEFINED",
-        // },
-        extra: {
-          usdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
-        },
-      });
-      const agent: Agent = data.data;
-
-      toast({
-        title: "Agent created ✨",
-        description: agent._id?.toString(),
-        action: (
-          <ToastAction altText="Try again">
-            <Link href={`/agents/${agent._id}`}>Open</Link>
-          </ToastAction>
-        ),
-      });
-    } catch (error) {
-      handleError(error, "Failed to submit the form, try again later");
-    } finally {
-      setIsProsessing(false);
-    }
+  if (!step1Data) {
+    return (
+      <NewAgentStep1Section
+        onStep1DataDefine={(step1Data) => setStep1Data(step1Data)}
+      />
+    );
   }
 
-  return (
-    <main className="container py-6 lg:px-80">
-      <div className="flex items-center justify-center size-24 rounded-full bg-primary">
-        <BotIcon className="size-12 text-primary-foreground" />
-      </div>
-      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
-        New agent
-      </h1>
-      <p className="text-muted-foreground mt-1">
-        Create a personalized AI agent with crypto features for your Mom or
-        other not-techie users
-      </p>
-      <Separator className="my-8" />
-      <Button
-        variant="default"
-        disabled={isProsessing}
-        onClick={() => handleSubmit()}
-      >
-        {isProsessing ? (
-          <Loader2Icon className="animate-spin" />
-        ) : (
-          <ArrowRightIcon />
-        )}
-        Create
-      </Button>
-    </main>
-  );
+  if (!step2Data) {
+    return (
+      <NewAgentStep2Section
+        onStep2DataDefine={(step2Data) => setStep2Data(step2Data)}
+      />
+    );
+  }
+
+  if (!step3Data) {
+    return (
+      <NewAgentStep3Section
+        onStep3DataDefine={(step3Data) => setStep3Data(step3Data)}
+      />
+    );
+  }
+
+  if (!step4Data) {
+    return (
+      <NewAgentStep4Section
+        onStep4DataDefine={(step4Data) => setStep4Data(step4Data)}
+      />
+    );
+  }
+
+  if (!step5Data) {
+    return (
+      <NewAgentStep5Section
+        onStep5DataDefine={(step5Data) => setStep5Data(step5Data)}
+      />
+    );
+  }
+
+  if (!agent) {
+    return (
+      <NewAgentFinalStepSection
+        step1Data={step1Data}
+        step2Data={step2Data}
+        step3Data={step3Data}
+        step4Data={step4Data}
+        step5Data={step5Data}
+        onAgentDefine={(agent) => setAgent(agent)}
+      />
+    );
+  }
+
+  return <NewAgentCreatedSection agent={agent} />;
 }

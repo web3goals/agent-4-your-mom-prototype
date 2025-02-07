@@ -22,8 +22,8 @@ import { createViemAccount } from "@privy-io/server-auth/viem";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-import { createWalletClient, Hex, http } from "viem";
-import { baseSepolia } from "viem/chains";
+import { createWalletClient, extractChain, Hex, http } from "viem";
+import * as chains from "viem/chains";
 import { z } from "zod";
 
 const requestBodySchema = z.object({
@@ -83,9 +83,13 @@ export async function POST(
     });
 
     // Initialize AgentKit with tools
+    const chain = extractChain({
+      chains: Object.values(chains),
+      id: agent.chainId as (typeof chains)[keyof typeof chains]["id"],
+    });
     const client = createWalletClient({
       account,
-      chain: baseSepolia, // TODO: Get this value from agent data
+      chain: chain,
       transport: http(),
     });
     const walletProvider = new ViemWalletProvider(client);

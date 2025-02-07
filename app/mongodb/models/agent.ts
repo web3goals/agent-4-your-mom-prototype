@@ -10,10 +10,12 @@ export class Agent {
     public name: string,
     public description: string,
     public emoji: string,
+    public chainId: number,
     public messages: StoredMessage[],
     public user: {
       name: string;
       email: string;
+      description: string;
     },
     public privyServerWallet: {
       id: string;

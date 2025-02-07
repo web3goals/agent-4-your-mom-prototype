@@ -27,6 +27,11 @@ const requestBodySchema = z.object({
   user: z.object({
     name: z.string().min(1),
     email: z.string().min(1),
+    description: z.string().min(1),
+  }),
+  chain: z.object({
+    id: z.number(),
+    usdtAddress: z.string().min(1),
   }),
   addressBook: z.array(requestBodyAddressBookElementSchema),
   twitterAccount: z
@@ -37,9 +42,6 @@ const requestBodySchema = z.object({
       accessTokenSecret: z.string().min(1),
     })
     .optional(),
-  extra: z.object({
-    usdtAddress: z.string().min(1),
-  }),
 });
 
 export async function POST(request: NextRequest) {
@@ -77,10 +79,10 @@ export async function POST(request: NextRequest) {
       "You have an address book containing the names of people and organizations and their addresses to which you can send your funds.",
       "You cannot add new entries to the address book.",
       "Your extra knowledge:",
-      `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.extra.usdtAddress}.`,
+      `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.chain.usdtAddress}.`,
     ].join("\n\n");
     const aiMessageContent = [
-      "Hello, my dear!",
+      `Hello, my dear ${bodyParseResult.data.user.name}!`,
       "How about to check your wallet balance?",
     ].join("\n\n");
     const agent: Agent = {
@@ -91,9 +93,11 @@ export async function POST(request: NextRequest) {
       name: bodyParseResult.data.name,
       description: bodyParseResult.data.description,
       emoji: bodyParseResult.data.emoji,
+      chainId: bodyParseResult.data.chain.id,
       user: {
         name: bodyParseResult.data.user.name,
         email: bodyParseResult.data.user.email,
+        description: bodyParseResult.data.user.description,
       },
       messages: [
         new SystemMessage({
