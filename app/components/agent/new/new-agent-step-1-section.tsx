@@ -3,22 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import { NewAgentStep1Data } from "@/types/new-agent-step-1-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function NewAgentStep1Section(props: {
-  onStep1DataDefine: (step1Data: NewAgentStep1Data) => void;
+  newAgentRequestData: NewAgentRequestData;
+  onNewAgentRequestDataUpdate: (
+    newAgentRequestData: NewAgentRequestData
+  ) => void;
 }) {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
 
   async function handleSubmit() {
     try {
-      props.onStep1DataDefine({
-        name: "Simon",
-        description: "Liza's cat that helps navigate the crypto world",
-        emoji: "🐈",
+      props.onNewAgentRequestDataUpdate({
+        ...props.newAgentRequestData,
+        agent: {
+          name: "Simon",
+          description: "Liza's cat that helps navigate the crypto world",
+          emoji: "🐈",
+        },
       });
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");

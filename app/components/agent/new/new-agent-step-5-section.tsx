@@ -3,23 +3,29 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import { NewAgentStep5Data } from "@/types/new-agent-step-5-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function NewAgentStep5Section(props: {
-  onStep5DataDefine: (step5Data: NewAgentStep5Data) => void;
+  newAgentRequestData: NewAgentRequestData;
+  onNewAgentRequestDataUpdate: (
+    newAgentRequestData: NewAgentRequestData
+  ) => void;
 }) {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
 
   async function handleSubmit() {
     try {
-      props.onStep5DataDefine({
-        twitterApiKey: "UNKNOWN",
-        twitterApiSecret: "UNKNOWN",
-        twitterAccessToken: "UNKNOWN",
-        twitterAccessTokenSecret: "UNKNOWN",
+      props.onNewAgentRequestDataUpdate({
+        ...props.newAgentRequestData,
+        twitter: {
+          apiKey: "UNKNOWN",
+          apiSecret: "UNKNOWN",
+          accessToken: "UNKNOWN",
+          accessTokenSecret: "UNKNOWN",
+        },
       });
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");

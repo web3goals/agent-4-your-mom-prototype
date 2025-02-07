@@ -3,22 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import { NewAgentStep3Data } from "@/types/new-agent-step-3-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { baseSepolia } from "viem/chains";
 
 export function NewAgentStep3Section(props: {
-  onStep3DataDefine: (step3Data: NewAgentStep3Data) => void;
+  newAgentRequestData: NewAgentRequestData;
+  onNewAgentRequestDataUpdate: (
+    newAgentRequestData: NewAgentRequestData
+  ) => void;
 }) {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
 
   async function handleSubmit() {
     try {
-      props.onStep3DataDefine({
-        chainId: baseSepolia.id,
-        chainUsdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
+      props.onNewAgentRequestDataUpdate({
+        ...props.newAgentRequestData,
+        chain: {
+          id: baseSepolia.id,
+          usdtAddress: "0x1b21550f42e993d1b692d18d79bcd783638633f2",
+        },
       });
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");

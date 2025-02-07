@@ -21,9 +21,11 @@ const requestBodySchema = z.object({
   creator: z.object({
     id: z.string().min(1),
   }),
-  name: z.string().min(1),
-  description: z.string().min(1),
-  emoji: z.string().min(1),
+  agent: z.object({
+    name: z.string().min(1),
+    description: z.string().min(1),
+    emoji: z.string().min(1),
+  }),
   user: z.object({
     name: z.string().min(1),
     email: z.string().min(1),
@@ -34,7 +36,7 @@ const requestBodySchema = z.object({
     usdtAddress: z.string().min(1),
   }),
   addressBook: z.array(requestBodyAddressBookElementSchema),
-  twitterAccount: z
+  twitter: z
     .object({
       apiKey: z.string().min(1),
       apiSecret: z.string().min(1),
@@ -90,9 +92,9 @@ export async function POST(request: NextRequest) {
         id: bodyParseResult.data.creator.id,
       },
       createdDate: new Date(),
-      name: bodyParseResult.data.name,
-      description: bodyParseResult.data.description,
-      emoji: bodyParseResult.data.emoji,
+      name: bodyParseResult.data.agent.name,
+      description: bodyParseResult.data.agent.description,
+      emoji: bodyParseResult.data.agent.emoji,
       chainId: bodyParseResult.data.chain.id,
       user: {
         name: bodyParseResult.data.user.name,
@@ -110,13 +112,12 @@ export async function POST(request: NextRequest) {
         address: privyAddress,
         chainType: privyChainType,
       },
-      ...(bodyParseResult.data.twitterAccount && {
+      ...(bodyParseResult.data.twitter && {
         twitterAccount: {
-          apiKey: bodyParseResult.data.twitterAccount.apiKey,
-          apiSecret: bodyParseResult.data.twitterAccount.apiSecret,
-          accessToken: bodyParseResult.data.twitterAccount.accessToken,
-          accessTokenSecret:
-            bodyParseResult.data.twitterAccount.accessTokenSecret,
+          apiKey: bodyParseResult.data.twitter.apiKey,
+          apiSecret: bodyParseResult.data.twitter.apiSecret,
+          accessToken: bodyParseResult.data.twitter.accessToken,
+          accessTokenSecret: bodyParseResult.data.twitter.accessTokenSecret,
         },
       }),
     };

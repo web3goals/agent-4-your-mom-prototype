@@ -1,80 +1,84 @@
 "use client";
 
 import { Agent } from "@/mongodb/models/agent";
-import { NewAgentStep1Data } from "@/types/new-agent-step-1-data";
-import { NewAgentStep2Data } from "@/types/new-agent-step-2-data";
-import { NewAgentStep3Data } from "@/types/new-agent-step-3-data";
-import { NewAgentStep4Data } from "@/types/new-agent-step-4-data";
-import { NewAgentStep5Data } from "@/types/new-agent-step-5-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { useState } from "react";
+import { NewAgentCreatedSection } from "./new-agent-created-section";
 import { NewAgentStep1Section } from "./new-agent-step-1-section";
 import { NewAgentStep2Section } from "./new-agent-step-2-section";
 import { NewAgentStep3Section } from "./new-agent-step-3-section";
 import { NewAgentStep4Section } from "./new-agent-step-4-section";
 import { NewAgentStep5Section } from "./new-agent-step-5-section";
 import { NewAgentFinalStepSection } from "./new-agent-step-final-section";
-import { NewAgentCreatedSection } from "./new-agent-created-section";
 
 export function NewAgentSection() {
-  const [step1Data, setStep1Data] = useState<NewAgentStep1Data | undefined>();
-  const [step2Data, setStep2Data] = useState<NewAgentStep2Data | undefined>();
-  const [step3Data, setStep3Data] = useState<NewAgentStep3Data | undefined>();
-  const [step4Data, setStep4Data] = useState<NewAgentStep4Data | undefined>();
-  const [step5Data, setStep5Data] = useState<NewAgentStep5Data | undefined>();
-  const [agent, setAgent] = useState<Agent | undefined>();
+  const [newAgenRequesttData, setNewAgentRequestData] =
+    useState<NewAgentRequestData>({});
+  const [newAgent, setNewAgent] = useState<Agent | undefined>();
 
-  if (!step1Data) {
+  if (!newAgenRequesttData.agent) {
     return (
       <NewAgentStep1Section
-        onStep1DataDefine={(step1Data) => setStep1Data(step1Data)}
+        newAgentRequestData={newAgenRequesttData}
+        onNewAgentRequestDataUpdate={(newAgentRequestData) =>
+          setNewAgentRequestData(newAgentRequestData)
+        }
       />
     );
   }
 
-  if (!step2Data) {
+  if (!newAgenRequesttData.user) {
     return (
       <NewAgentStep2Section
-        onStep2DataDefine={(step2Data) => setStep2Data(step2Data)}
+        newAgentRequestData={newAgenRequesttData}
+        onNewAgentRequestDataUpdate={(newAgentRequestData) =>
+          setNewAgentRequestData(newAgentRequestData)
+        }
       />
     );
   }
 
-  if (!step3Data) {
+  if (!newAgenRequesttData.chain) {
     return (
       <NewAgentStep3Section
-        onStep3DataDefine={(step3Data) => setStep3Data(step3Data)}
+        newAgentRequestData={newAgenRequesttData}
+        onNewAgentRequestDataUpdate={(newAgentRequestData) =>
+          setNewAgentRequestData(newAgentRequestData)
+        }
       />
     );
   }
 
-  if (!step4Data) {
+  if (!newAgenRequesttData.addressBook) {
     return (
       <NewAgentStep4Section
-        onStep4DataDefine={(step4Data) => setStep4Data(step4Data)}
+        newAgentRequestData={newAgenRequesttData}
+        onNewAgentRequestDataUpdate={(newAgentRequestData) =>
+          setNewAgentRequestData(newAgentRequestData)
+        }
       />
     );
   }
 
-  if (!step5Data) {
+  if (!newAgenRequesttData.twitter) {
     return (
       <NewAgentStep5Section
-        onStep5DataDefine={(step5Data) => setStep5Data(step5Data)}
+        newAgentRequestData={newAgenRequesttData}
+        onNewAgentRequestDataUpdate={(newAgentRequestData) =>
+          setNewAgentRequestData(newAgentRequestData)
+        }
       />
     );
   }
 
-  if (!agent) {
+  if (!newAgent) {
     return (
       <NewAgentFinalStepSection
-        step1Data={step1Data}
-        step2Data={step2Data}
-        step3Data={step3Data}
-        step4Data={step4Data}
-        step5Data={step5Data}
-        onAgentDefine={(agent) => setAgent(agent)}
+        newAgentRequestData={newAgenRequesttData}
+        onAgentDefine={(agent) => setNewAgent(agent)}
       />
     );
   }
 
-  return <NewAgentCreatedSection agent={agent} />;
+  return <NewAgentCreatedSection newAgent={newAgent} />;
 }

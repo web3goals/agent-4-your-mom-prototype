@@ -3,19 +3,23 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import { NewAgentStep4Data } from "@/types/new-agent-step-4-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function NewAgentStep4Section(props: {
-  onStep4DataDefine: (step4Data: NewAgentStep4Data) => void;
+  newAgentRequestData: NewAgentRequestData;
+  onNewAgentRequestDataUpdate: (
+    newAgentRequestData: NewAgentRequestData
+  ) => void;
 }) {
   const { handleError } = useError();
   const [isProsessing, setIsProsessing] = useState(false);
 
   async function handleSubmit() {
     try {
-      props.onStep4DataDefine({
+      props.onNewAgentRequestDataUpdate({
+        ...props.newAgentRequestData,
         addressBook: [
           {
             name: "Alice",

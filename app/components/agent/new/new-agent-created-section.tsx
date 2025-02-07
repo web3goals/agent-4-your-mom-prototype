@@ -6,7 +6,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { ArrowRightIcon, BotIcon } from "lucide-react";
 import Link from "next/link";
 
-export function NewAgentCreatedSection(props: { agent: Agent }) {
+export function NewAgentCreatedSection(props: { newAgent: Agent }) {
   return (
     <main className="container py-6 lg:px-80">
       <div className="flex items-center justify-center size-24 rounded-full bg-primary">
@@ -18,7 +18,7 @@ export function NewAgentCreatedSection(props: { agent: Agent }) {
       {/* TODO: Define step description */}
       <p className="text-muted-foreground mt-1">...</p>
       <Separator className="my-8" />
-      <Link href={`/agents/${props.agent._id}`}>
+      <Link href={`/agents/${props.newAgent._id}`}>
         <Button variant="default">
           <ArrowRightIcon /> Open agent
         </Button>

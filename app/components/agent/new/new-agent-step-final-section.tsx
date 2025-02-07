@@ -4,22 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { Agent } from "@/mongodb/models/agent";
-import { NewAgentStep1Data } from "@/types/new-agent-step-1-data";
-import { NewAgentStep2Data } from "@/types/new-agent-step-2-data";
-import { NewAgentStep3Data } from "@/types/new-agent-step-3-data";
-import { NewAgentStep4Data } from "@/types/new-agent-step-4-data";
-import { NewAgentStep5Data } from "@/types/new-agent-step-5-data";
+import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { ArrowRightIcon, BotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function NewAgentFinalStepSection(props: {
-  step1Data: NewAgentStep1Data;
-  step2Data: NewAgentStep2Data;
-  step3Data: NewAgentStep3Data;
-  step4Data: NewAgentStep4Data;
-  step5Data: NewAgentStep5Data;
+  newAgentRequestData: NewAgentRequestData;
   onAgentDefine: (agent: Agent) => void;
 }) {
   const { handleError } = useError();
@@ -36,34 +28,11 @@ export function NewAgentFinalStepSection(props: {
 
       // Send request to create an agent
       const { data } = await axios.post("/api/agents/new", {
+        ...props.newAgentRequestData,
         creator: {
           id: user.id,
         },
-        name: props.step1Data.name,
-        description: props.step1Data.description,
-        emoji: props.step1Data.emoji,
-        user: {
-          name: props.step2Data.userName,
-          email: props.step2Data.userEmail,
-          description: props.step2Data.userDescription,
-        },
-        chain: {
-          id: props.step3Data.chainId,
-          usdtAddress: props.step3Data.chainUsdtAddress,
-        },
-        addressBook: props.step4Data.addressBook,
-        ...(props.step5Data.twitterApiKey &&
-          props.step5Data.twitterApiSecret &&
-          props.step5Data.twitterAccessToken &&
-          props.step5Data.twitterAccessTokenSecret && {
-            twitterAccount: {
-              apiKey: props.step5Data.twitterApiKey,
-              apiSecret: props.step5Data.twitterApiSecret,
-              accessToken: props.step5Data.twitterAccessToken,
-              accessTokenSecret: props.step5Data.twitterAccessTokenSecret,
-            },
-          }),
-      });
+      } as NewAgentRequestData);
       const agent: Agent = data.data;
       props.onAgentDefine(agent);
     } catch (error) {
