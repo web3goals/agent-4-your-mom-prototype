@@ -3,6 +3,7 @@
 import { Agent } from "@/mongodb/models/agent";
 import { StoredMessage } from "@langchain/core/messages";
 import { AgentMessageCardContent } from "./agent-message-card-content";
+import { AgentMessageCardFund } from "./agent-message-card-fund";
 
 export function AgentMessageCard(props: {
   agent: Agent;
@@ -14,9 +15,13 @@ export function AgentMessageCard(props: {
         <div className="flex items-center justify-center size-8 bg-primary rounded-full">
           <p>{props.agent.personality.emoji}</p>
         </div>
-        <div className="flex-1 bg-secondary border rounded-lg px-4 py-3">
-          <AgentMessageCardContent content={props.message.data.content} />
-        </div>
+        {props.message.data.content.includes("%FUND_WIDGET%") ? (
+          <AgentMessageCardFund agent={props.agent} />
+        ) : (
+          <div className="flex-1 bg-secondary border rounded-lg px-4 py-3">
+            <AgentMessageCardContent content={props.message.data.content} />
+          </div>
+        )}
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import "@coinbase/onchainkit/styles.css";
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 

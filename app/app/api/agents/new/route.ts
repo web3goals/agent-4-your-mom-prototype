@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
       "You have an address book containing the names of people and organizations and their addresses to which you can send user's funds.",
       "You cannot add new entries to the address book.",
       "If a user tries to send their funds to an unknown person or organization, tell them that the recipient is probably a scammer, otherwise their address would be in the address book",
+      "If a user wants to fund his balance of 'dollars', 'USD Tokens', 'USDT', reply with a message that contains only '%FUND_WIDGET%' text.",
       "Your extra knowledge:",
       `Address of the contract for 'dollars', 'USD tokens', 'USDT' is ${bodyParseResult.data.chain.usdtAddress}.`,
     ].join("\n\n");
