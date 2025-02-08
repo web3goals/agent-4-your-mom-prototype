@@ -2,6 +2,8 @@
 
 import { agentActionProvider } from "@/action-providers/agent/provider";
 import { twitterActionProvider } from "@/action-providers/twitter/provider";
+import { chainsConfig } from "@/config/chains";
+import { nillionConfig } from "@/config/nillion";
 import { errorToString } from "@/lib/converters";
 import { findAgent, updateAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
@@ -97,7 +99,12 @@ export async function POST(
       walletProvider: walletProvider,
       actionProviders: [
         walletActionProvider(),
-        agentActionProvider(agent),
+        agentActionProvider({
+          chainsConfig: chainsConfig,
+          nillionAgentId: agent._id?.toString() || "",
+          nillionNodes: nillionConfig.nodes,
+          nillionSchemaAddressBookId: nillionConfig.schemaAddressBookId,
+        }),
         ...(agent.twitterAccount
           ? [
               twitterActionProvider({

@@ -1,6 +1,3 @@
-import { chainsConfig } from "@/config/chains";
-import { nillionConfig } from "@/config/nillion";
-import { Agent } from "@/mongodb/models/agent";
 import {
   ActionProvider,
   CreateAction,
@@ -9,7 +6,14 @@ import {
 } from "@coinbase/agentkit";
 import { nilql } from "@nillion/nilql";
 import axios from "axios";
-import { encodeFunctionData, Hex, parseEther, parseEventLogs } from "viem";
+import {
+  Address,
+  Chain,
+  encodeFunctionData,
+  Hex,
+  parseEther,
+  parseEventLogs,
+} from "viem";
 import { z } from "zod";
 import { erc20Abi } from "./abi/erc20";
 import { erc20FactoryAbi } from "./abi/erc20Factory";
@@ -24,11 +28,42 @@ import {
  * An action provider with tools for the agent address book and ERC20 tokens.
  */
 export class AgentActionProvider extends ActionProvider {
-  agent: Agent;
+  chainsConfig: {
+    chain: Chain;
+    contracts: {
+      erc20Factory: Address;
+    };
+  }[];
+  nillionAgentId: string;
+  nillionNodes: {
+    name: string;
+    url: string;
+    did: string;
+    jwt: string;
+  }[];
+  nillionSchemaAddressBookId: string;
 
-  constructor(agent: Agent) {
+  constructor(args: {
+    chainsConfig: {
+      chain: Chain;
+      contracts: {
+        erc20Factory: Address;
+      };
+    }[];
+    nillionAgentId: string;
+    nillionNodes: {
+      name: string;
+      url: string;
+      did: string;
+      jwt: string;
+    }[];
+    nillionSchemaAddressBookId: string;
+  }) {
     super("agent", []);
-    this.agent = agent;
+    this.chainsConfig = args.chainsConfig;
+    this.nillionAgentId = args.nillionAgentId;
+    this.nillionNodes = args.nillionNodes;
+    this.nillionSchemaAddressBookId = args.nillionSchemaAddressBookId;
   }
 
   /**
@@ -53,13 +88,13 @@ It takes the name of a person or organization.
     try {
       // Send request to Nillion SecretVault
       const results = await Promise.all(
-        nillionConfig.nodes.map(async (node) => {
+        this.nillionNodes.map(async (node) => {
           const { data } = await axios.post(
             `${node.url}/api/v1/data/read`,
             {
-              schema: nillionConfig.schemaAddressBookId,
+              schema: this.nillionSchemaAddressBookId,
               filter: {
-                agent: this.agent._id?.toString(),
+                agent: this.nillionAgentId,
                 name: args.name.toLowerCase(),
               },
             },
@@ -82,7 +117,7 @@ It takes the name of a person or organization.
 
       // Decrypt address
       const cluster = {
-        nodes: Array(nillionConfig.nodes.length).fill({}),
+        nodes: Array(this.nillionNodes.length).fill({}),
       };
       const secretKey = await nilql.ClusterKey.generate(cluster, {
         store: true,
@@ -160,13 +195,13 @@ Important notes:
     try {
       // Send request to Nillion SecretVault
       const results = await Promise.all(
-        nillionConfig.nodes.map(async (node) => {
+        this.nillionNodes.map(async (node) => {
           const { data } = await axios.post(
             `${node.url}/api/v1/data/read`,
             {
-              schema: nillionConfig.schemaAddressBookId,
+              schema: this.nillionSchemaAddressBookId,
               filter: {
-                agent: this.agent._id?.toString(),
+                agent: this.nillionAgentId,
                 name: args.recipientName.toLowerCase(),
               },
             },
@@ -189,7 +224,7 @@ Important notes:
 
       // Decrypt address
       const cluster = {
-        nodes: Array(nillionConfig.nodes.length).fill({}),
+        nodes: Array(this.nillionNodes.length).fill({}),
       };
       const secretKey = await nilql.ClusterKey.generate(cluster, {
         store: true,
@@ -241,7 +276,7 @@ It takes the following inputs:
   ): Promise<string> {
     try {
       // Get ERC20 Factory contract address
-      const chainConfig = chainsConfig.find(
+      const chainConfig = this.chainsConfig.find(
         (chain) =>
           chain.chain.id.toString() ===
           walletProvider.getNetwork().chainId?.toString()
@@ -288,5 +323,19 @@ It takes the following inputs:
   };
 }
 
-export const agentActionProvider = (agent: Agent) =>
-  new AgentActionProvider(agent);
+export const agentActionProvider = (args: {
+  chainsConfig: {
+    chain: Chain;
+    contracts: {
+      erc20Factory: Address;
+    };
+  }[];
+  nillionAgentId: string;
+  nillionNodes: {
+    name: string;
+    url: string;
+    did: string;
+    jwt: string;
+  }[];
+  nillionSchemaAddressBookId: string;
+}) => new AgentActionProvider(args);
