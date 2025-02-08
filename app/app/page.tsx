@@ -21,8 +21,8 @@ export default function LandingPage() {
         Help your mom venture into the crypto world with a personalized AI agent{" "}
       </h1>
       <p className="font-medium tracking-tight text-muted-foreground max-w-[680px] mt-2">
-        A platform for creating and using personalized AI agents with crypto
-        features for your mom or other not-techie users
+        A platform for creating personalized AI agents with crypto features for
+        your mom or other not-techie users
       </p>
       <Link href="/agents/new">
         <Button className="mt-4">
