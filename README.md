@@ -26,7 +26,7 @@ A platform for creating personalized AI agents with crypto features for your mom
 ## 🔗 Artifacts
 
 - Application - [agent-4-your-mom.vercel.app](https://agent-4-your-mom.vercel.app/)
-- Custom Action Provider - [/app/action-providers/agent/README.md]https://github.com/web3goals/agent-4-your-mom-prototype/blob/main/app/action-providers/agent/README.md
+- Custom Action Provider - [/app/action-providers/agent/README.md](https://github.com/web3goals/agent-4-your-mom-prototype/blob/main/app/action-providers/agent/README.md)
 - Contracts (Base Sepolia):
   - USD Token - `0x1b21550f42e993d1b692d18d79bcd783638633f2`
   - ERC20 Factory - `0x4f316c6536ce3ee94de802a9efdb20484ec4bdf9`
