@@ -7,6 +7,7 @@ import {
   EvmWalletProvider,
   ViemWalletProvider,
 } from "@coinbase/agentkit";
+import { nilql } from "@nillion/nilql";
 import axios from "axios";
 import { encodeFunctionData, Hex, parseEther, parseEventLogs } from "viem";
 import { z } from "zod";
@@ -69,18 +70,29 @@ It takes the name of a person or organization.
               },
             }
           );
-
           return { nodeName: node.name, data };
         })
       );
 
       // Get address from the first node result
       const address = results[0].data?.data?.[0]?.address;
-      if (address) {
-        return `Address of ${args.name} is ${address}`;
+      if (!address) {
+        return `There's no address for ${args.name} in the address book`;
       }
 
-      return `Not found an address for ${args.name}`;
+      // Decrypt address
+      const cluster = {
+        nodes: Array(nillionConfig.nodes.length).fill({}),
+      };
+      const secretKey = await nilql.ClusterKey.generate(cluster, {
+        store: true,
+      });
+      const decryptedAddress = await nilql.decrypt(
+        secretKey,
+        (address as string).split(",")
+      );
+
+      return `Address of ${args.name} is ${decryptedAddress}`;
     } catch (error) {
       return `Error getting address: ${error}`;
     }
@@ -146,7 +158,7 @@ Important notes:
     args: z.infer<typeof TransferErc20Schema>
   ): Promise<string> {
     try {
-      // Get an address from the address book in Nillion SecretVault
+      // Send request to Nillion SecretVault
       const results = await Promise.all(
         nillionConfig.nodes.map(async (node) => {
           const { data } = await axios.post(
@@ -168,10 +180,24 @@ Important notes:
           return { nodeName: node.name, data };
         })
       );
-      const address = results[0].data?.data?.[0]?.address; // TODO: Decode value using nilQL
+
+      // Get address from the first node result
+      const address = results[0].data?.data?.[0]?.address;
       if (!address) {
         return `There's no address for ${args.recipientName} in the address book`;
       }
+
+      // Decrypt address
+      const cluster = {
+        nodes: Array(nillionConfig.nodes.length).fill({}),
+      };
+      const secretKey = await nilql.ClusterKey.generate(cluster, {
+        store: true,
+      });
+      const decryptedAddress = await nilql.decrypt(
+        secretKey,
+        (address as string).split(",")
+      );
 
       // Send a transaction to transfer tokens
       const hash = await walletProvider.sendTransaction({
@@ -179,7 +205,7 @@ Important notes:
         data: encodeFunctionData({
           abi: erc20Abi,
           functionName: "transfer",
-          args: [address as Hex, parseEther(args.amount.toString())],
+          args: [decryptedAddress as Hex, parseEther(args.amount.toString())],
         }),
       });
 

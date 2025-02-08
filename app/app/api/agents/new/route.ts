@@ -6,6 +6,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { insertAgent } from "@/mongodb/services/agent-service";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/utils/api";
 import { AIMessage, SystemMessage } from "@langchain/core/messages";
+import { nilql } from "@nillion/nilql";
 import { PrivyClient } from "@privy-io/server-auth";
 import axios from "axios";
 import { NextRequest } from "next/server";
@@ -124,6 +125,30 @@ export async function POST(request: NextRequest) {
     agent._id = agentId;
     console.log("Agent is inserted to MongoDB");
 
+    // Encrypt address book
+    const cluster = {
+      nodes: Array(nillionConfig.nodes.length).fill({}),
+    };
+    const secretKey = await nilql.ClusterKey.generate(cluster, {
+      store: true,
+    });
+    const encryptedAddressBook: {
+      name: string;
+      address: string;
+    }[] = [];
+    for (const element of bodyParseResult.data.addressBook) {
+      const encryptedAddress = (
+        (await nilql.encrypt(
+          secretKey,
+          element.address.toLowerCase()
+        )) as string[]
+      ).join(",");
+      encryptedAddressBook.push({
+        name: element.name.toLowerCase(),
+        address: encryptedAddress,
+      });
+    }
+
     // Upload address book to Nillion SecretVault
     await Promise.all(
       nillionConfig.nodes.map(async (node) => {
@@ -131,11 +156,11 @@ export async function POST(request: NextRequest) {
           `${node.url}/api/v1/data/create`,
           {
             schema: nillionConfig.schemaAddressBookId,
-            data: bodyParseResult.data.addressBook.map((element) => ({
+            data: encryptedAddressBook.map((element) => ({
               _id: uuidv4(),
               agent: agent._id?.toString(),
-              name: element.name.toLowerCase(),
-              address: element.address.toLowerCase(), // TODO: Encode value using nilQL
+              name: element.name,
+              address: element.address,
             })),
           },
           {
