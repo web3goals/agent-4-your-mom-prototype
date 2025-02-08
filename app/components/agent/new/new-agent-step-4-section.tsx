@@ -36,8 +36,8 @@ export function NewAgentStep4Section(props: {
     resolver: zodResolver(formSchema),
     defaultValues: {
       addressBook: [
-        "Alice, 0x0000000000000000000000000000000000000000",
-        "Wildlife Foundation, 0x0000000000000000000000000000000000000000",
+        "Alice,0x0000000000000000000000000000000000000000",
+        "Wildlife Foundation,0x0000000000000000000000000000000000000000",
       ].join("\n"),
     },
   });
@@ -83,7 +83,7 @@ export function NewAgentStep4Section(props: {
                 <FormControl>
                   <Textarea
                     placeholder={
-                      "Alice, 0x0000000000000000000000000000000000000000\nWildlife Foundation, 0x0000000000000000000000000000000000000000"
+                      "Alice,0x0000000000000000000000000000000000000000\nWildlife Foundation,0x0000000000000000000000000000000000000000"
                     }
                     disabled={isProsessing}
                     rows={5}

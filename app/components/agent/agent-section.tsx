@@ -9,20 +9,20 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import useError from "@/hooks/use-error";
+import { privyUserToEmail } from "@/lib/converters";
 import { Agent } from "@/mongodb/models/agent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StoredMessage } from "@langchain/core/messages";
+import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { Loader2Icon, SendIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "../ui/separator";
+import { Textarea } from "../ui/textarea";
 import { AgentMessageCard } from "./agent-message-card";
-import { usePrivy } from "@privy-io/react-auth";
-import { privyUserToEmail } from "@/lib/converters";
 
 export function AgentSection(props: {
   agent: Agent;
@@ -80,7 +80,7 @@ export function AgentSection(props: {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="flex flex-row gap-2"
+            className="flex flex-row items-end gap-2"
           >
             <FormField
               control={form.control}
@@ -88,8 +88,9 @@ export function AgentSection(props: {
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input
+                    <Textarea
                       placeholder="Your message..."
+                      rows={1}
                       disabled={isProsessing}
                       {...field}
                     />
