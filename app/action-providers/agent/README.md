@@ -15,7 +15,7 @@ An action provider for [Coinbase AgentKit](https://docs.cdp.coinbase.com/agentki
 
 2. Fill in the address book using [this example](https://github.com/web3goals/agent-4-your-mom-prototype/blob/main/app/app/api/agents/new/route.ts#L128).
 
-3. Install and Coinbase AgentKit by [this instruction](https://docs.cdp.coinbase.com/agentkit/docs/quickstart).
+3. Set up Coinbase AgentKit by [this instruction](https://docs.cdp.coinbase.com/agentkit/docs/quickstart).
 
 4. Copy this action provider into your project.
 
