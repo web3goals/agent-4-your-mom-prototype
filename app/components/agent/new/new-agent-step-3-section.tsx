@@ -41,7 +41,6 @@ export function NewAgentStep3Section(props: {
     usdtAddress: z.string().length(42),
   });
 
-  // TODO: Delete default values for production
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

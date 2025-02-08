@@ -35,14 +35,13 @@ export function NewAgentStep5Section(props: {
     accessTokenSecret: z.string().min(1),
   });
 
-  // TODO: Delete default values for production
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      apiKey: "UNKNOWN",
-      apiSecret: "UNKNOWN",
-      accessToken: "UNKNOWN",
-      accessTokenSecret: "UNKNOWN",
+      apiKey: "",
+      apiSecret: "",
+      accessToken: "",
+      accessTokenSecret: "",
     },
   });
 
@@ -106,6 +105,7 @@ export function NewAgentStep5Section(props: {
                 <FormLabel>API key *</FormLabel>
                 <FormControl>
                   <Input
+                    type="password"
                     placeholder="az..."
                     disabled={isProsessing}
                     {...field}
@@ -123,6 +123,7 @@ export function NewAgentStep5Section(props: {
                 <FormLabel>API secret *</FormLabel>
                 <FormControl>
                   <Input
+                    type="password"
                     placeholder="az..."
                     disabled={isProsessing}
                     {...field}
@@ -140,6 +141,7 @@ export function NewAgentStep5Section(props: {
                 <FormLabel>Access token *</FormLabel>
                 <FormControl>
                   <Input
+                    type="password"
                     placeholder="az..."
                     disabled={isProsessing}
                     {...field}
@@ -157,6 +159,7 @@ export function NewAgentStep5Section(props: {
                 <FormLabel>Access token secret *</FormLabel>
                 <FormControl>
                   <Input
+                    type="password"
                     placeholder="az..."
                     disabled={isProsessing}
                     {...field}

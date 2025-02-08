@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
           _id: uuidv4(),
           agent: "67a2341afc47875a1fc02611",
           name: "Alice",
-          address: "0x4306D7a79265D2cb85Db0c5a55ea5F4f6F73C4B1",
+          address: "0x0000000000000000000000000000000000000000",
         },
       ],
     };

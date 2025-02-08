@@ -32,13 +32,12 @@ export function NewAgentStep4Section(props: {
     addressBook: z.string().min(3),
   });
 
-  // TODO: Delete default values for production
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       addressBook: [
-        "Alice, 0x4306D7a79265D2cb85Db0c5a55ea5F4f6F73C4B1",
-        "Bob, 0x3F121f9a16bd6C83D325985417aDA3FE0f517B7D",
+        "Alice, 0x0000000000000000000000000000000000000000",
+        "Wildlife Foundation, 0x0000000000000000000000000000000000000000",
       ].join("\n"),
     },
   });
@@ -84,7 +83,7 @@ export function NewAgentStep4Section(props: {
                 <FormControl>
                   <Textarea
                     placeholder={
-                      "Alice, 0x0000000000000000000000000000000000000000\nBob, 0x0000000000000000000000000000000000000000"
+                      "Alice, 0x0000000000000000000000000000000000000000\nWildlife Foundation, 0x0000000000000000000000000000000000000000"
                     }
                     disabled={isProsessing}
                     rows={5}

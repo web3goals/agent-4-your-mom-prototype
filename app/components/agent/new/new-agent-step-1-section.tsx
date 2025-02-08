@@ -33,12 +33,11 @@ export function NewAgentStep1Section(props: {
     email: z.string().email().min(1),
   });
 
-  // TODO: Delete default values for production
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "Mary",
-      email: "vampirenish666@gmail.com",
+      email: "",
     },
   });
 
@@ -81,7 +80,7 @@ export function NewAgentStep1Section(props: {
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Alice"
+                    placeholder="Mary"
                     disabled={isProsessing}
                     {...field}
                   />
@@ -98,7 +97,7 @@ export function NewAgentStep1Section(props: {
                 <FormLabel>Email *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="alice@domain.com"
+                    placeholder="mary@site.com"
                     disabled={isProsessing}
                     {...field}
                   />
